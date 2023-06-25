@@ -1,0 +1,32 @@
+{
+  "name": "react-magic-card",
+  "version": "0.0.1",
+  "description": "animation",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/su-pull/react-magic-card",
+    "directory": "react-magic-card/src"
+  },
+  "scripts": {
+    "tsc": "./node_modules/.bin/tsc",
+    "test": "test"
+  },
+  "keywords": [
+    "react",
+    "illust",
+    "photograph",
+    "animation"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "framer-motion": "^10.12.16",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.1.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.12"
+  }
+}

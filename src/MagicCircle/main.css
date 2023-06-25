@@ -1,0 +1,15 @@
+.outer {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner {
+  position: relative;
+}
+
+.inner img {
+  position: absolute;
+  object-fit: "cover";
+}
