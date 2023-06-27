@@ -140,9 +140,9 @@ export const MagicCircle = ({
     if (!range || !hasDelayed) return
 
     // Add handle event when component mount and deps update.
-    range.addEventListener('wheel', handleWheel)
-    range.addEventListener('touchstart', handleTouchStart)
-    range.addEventListener('touchmove', handleTouchMove)
+    range.addEventListener('wheel', handleWheel, { passive: true })
+    range.addEventListener('touchstart', handleTouchStart, { passive: true })
+    range.addEventListener('touchmove', handleTouchMove, { passive: true })
 
     // Clean up event and timeId when component is unmount.
     return () => {
@@ -155,13 +155,14 @@ export const MagicCircle = ({
 
   // Functions of the controller.
   // entry ref area.
-  const enterControll = (e: Event) => {
-    e.preventDefault()
+  const enterControll = () => {
     document.body.style.overflow = 'hidden'
+    document.body.style.overscrollBehavior = 'none'
   }
   // leave ref area.
   const leaveControll = () => {
     document.body.style.overflow = 'auto'
+    document.body.style.overscrollBehavior = 'auto'
   }
 
   // Added event when component is mounted.
@@ -170,9 +171,9 @@ export const MagicCircle = ({
     if (!range) return
 
     // Add event.
-    range.addEventListener('mouseover', enterControll, { passive: false })
+    range.addEventListener('mouseover', enterControll)
     range.addEventListener('mouseout', leaveControll)
-    range.addEventListener('touchstart', enterControll, { passive: false })
+    range.addEventListener('touchstart', enterControll)
     range.addEventListener('touchend', leaveControll)
 
     // Clean up event when component is unmount.
