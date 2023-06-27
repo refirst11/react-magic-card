@@ -134,11 +134,10 @@ export const MagicCircle = ({
   // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
     const range = ref.current
-    if (!range || !hasDelayed) return
-
     const timeId = setTimeout(() => {
       setHasDelayed(true)
     }, wheelDelay)
+    if (!range || !hasDelayed) return
 
     // Add handle event when component mount and deps update.
     range.addEventListener('wheel', handleWheel)
