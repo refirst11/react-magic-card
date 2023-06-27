@@ -59,21 +59,21 @@ function MyComponent() {
 }
 ```
 
-## Properties
-
-- data: An array a images property objects for src and alt.
-- width: The width of single image.
-- height: The height a single image.
-- dynamic: A flag indicating whether dynamic rotation is allow.
-- start: The Index number, start scale position
-- radius: The radius of the circle.
-- controller: The diameter plus the value of the controller is the size of the controller.
-- className: The class name of the component.
-- classImage: The class name of the images.
-- classImageUnique: An index number is assigned to the end of the class name set for this.
-- animate: An object in the animation property.
-- initial: An object in the animation property.
-- transition: An object in the transition property.
+| Property         | Explanation                                                              |
+| ---------------- | ------------------------------------------------------------------------ |
+| images           | array of images and objects containing the src and alt properties.       |
+| width            | width of a single image.                                                 |
+| height           | height of a single image.                                                |
+| dynamic          | indicating whether dynamic rotation is allowed.                          |
+| start            | index number of the starting scale position.                             |
+| radius           | radius of the circle.                                                    |
+| controller       | diameter plus the value of the controller is the size of the controller. |
+| className        | class name of the component.                                             |
+| classImage       | class name of the images.                                                |
+| classImageUnique | index number is assigned to the end of the class name set for this.      |
+| animate          | object in the animation property.                                        |
+| initial          | object in the animation property.                                        |
+| transition       | object in the transition property.                                       |
 
 ## Animation property
 
