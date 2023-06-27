@@ -1,7 +1,7 @@
 {
   "name": "react-magic-card",
-  "version": "0.0.1",
-  "description": "animation",
+  "version": "0.0.2",
+  "description": "image gallery component with framer motion",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "repository": {
@@ -11,6 +11,8 @@
   },
   "scripts": {
     "tsc": "./node_modules/.bin/tsc",
+    "copy-css": "cp src/MagicCircle/main.css dist/MagicCircle/main.css",
+    "compile": "tsc && npm run copy-css",
     "test": "test"
   },
   "keywords": [
