@@ -1,5 +1,4 @@
 .outer {
-  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,5 +10,5 @@
 
 .inner img {
   position: absolute;
-  object-fit: "cover";
+  object-fit: 'cover';
 }
