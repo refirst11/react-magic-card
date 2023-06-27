@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { m } from 'framer-motion'
+import { m, LazyMotion, domAnimation } from 'framer-motion'
 import './main.css'
 
 type ImageProperty = {
@@ -171,59 +171,83 @@ export const MagicCircle = ({
   const angle = parseFloat((2 * Math.PI).toFixed(15)) / data.length
 
   return (
-    <m.div
-      ref={ref}
-      className={className + ' ' + 'outer'}
-      style={{
-        width: radius * 2 + controller + 'px',
-        height: radius * 2 + controller + 'px'
-      }}
-      animate={{ rotate: count }}
-      transition={{ duration: transition?.duration }}
-    >
-      <div
-        className="inner"
-        style={{ width: radius * 2 + 'px', height: radius * 2 + 'px' }}
+    <LazyMotion features={domAnimation}>
+      <m.div
+        ref={ref}
+        className={className + ' ' + 'outer'}
+        style={{
+          width: radius * 2 + controller + 'px',
+          height: radius * 2 + controller + 'px'
+        }}
+        animate={{ rotate: count }}
+        transition={{ duration: transition?.duration }}
       >
-        {images.map((image, index) => {
-          const hasSelect = images[select] == images[index]
-          return (
-            <m.img
-              key={index}
-              animate={{
-                scale: hasSelect ? animate?.selectScale : animate?.scale,
-                opacity: hasSelect ? animate?.selectOpacity : animate?.opacity,
-                rotateX: hasSelect ? animate?.selectRotateX : animate?.rotateX,
-                rotateY: hasSelect ? animate?.selectRotateY : animate?.rotateY,
-                rotateZ: hasSelect ? animate?.selectRotateZ : animate?.rotateZ,
+        <div
+          className="inner"
+          style={{ width: radius * 2 + 'px', height: radius * 2 + 'px' }}
+        >
+          {images.map((image, index) => {
+            const hasSelect = images[select] == images[index]
+            return (
+              <m.img
+                key={index}
+                animate={{
+                  scale: hasSelect ? animate?.selectScale : animate?.scale,
+                  opacity: hasSelect
+                    ? animate?.selectOpacity
+                    : animate?.opacity,
+                  rotateX: hasSelect
+                    ? animate?.selectRotateX
+                    : animate?.rotateX,
+                  rotateY: hasSelect
+                    ? animate?.selectRotateY
+                    : animate?.rotateY,
+                  rotateZ: hasSelect
+                    ? animate?.selectRotateZ
+                    : animate?.rotateZ,
 
-                rotate: -count
-              }}
-              initial={{
-                scale: hasSelect ? initial?.selectScale : initial?.scale,
-                opacity: hasSelect ? initial?.selectOpacity : initial?.opacity,
-                rotateX: hasSelect ? initial?.selectRotateX : initial?.rotateX,
-                rotateY: hasSelect ? initial?.selectRotateY : initial?.rotateY,
-                rotateZ: hasSelect ? initial?.selectRotateZ : initial?.rotateZ,
-                rotate: -count
-              }}
-              transition={transition}
-              onClick={() => setSelect(index)}
-              className={classImage + ' ' + classImageUnique + index}
-              src={image.src}
-              alt={image.alt}
-              style={{
-                width: width + 'px',
-                height: height + 'px',
-                left:
-                  radius * Math.cos(index * angle) + radius - width / 2 + 'px',
-                top:
-                  radius * Math.sin(index * angle) + radius - height / 2 + 'px'
-              }}
-            />
-          )
-        })}
-      </div>
-    </m.div>
+                  rotate: -count
+                }}
+                initial={{
+                  scale: hasSelect ? initial?.selectScale : initial?.scale,
+                  opacity: hasSelect
+                    ? initial?.selectOpacity
+                    : initial?.opacity,
+                  rotateX: hasSelect
+                    ? initial?.selectRotateX
+                    : initial?.rotateX,
+                  rotateY: hasSelect
+                    ? initial?.selectRotateY
+                    : initial?.rotateY,
+                  rotateZ: hasSelect
+                    ? initial?.selectRotateZ
+                    : initial?.rotateZ,
+                  rotate: -count
+                }}
+                transition={transition}
+                onClick={() => setSelect(index)}
+                className={classImage + ' ' + classImageUnique + index}
+                src={image.src}
+                alt={image.alt}
+                style={{
+                  width: width + 'px',
+                  height: height + 'px',
+                  left:
+                    radius * Math.cos(index * angle) +
+                    radius -
+                    width / 2 +
+                    'px',
+                  top:
+                    radius * Math.sin(index * angle) +
+                    radius -
+                    height / 2 +
+                    'px'
+                }}
+              />
+            )
+          })}
+        </div>
+      </m.div>
+    </LazyMotion>
   )
 }
