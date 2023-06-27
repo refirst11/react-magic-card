@@ -155,14 +155,13 @@ export const MagicCircle = ({
 
   // Functions of the controller.
   // entry ref area.
-  const enterControll = () => {
+  const enterControll = (e: Event) => {
+    e.preventDefault()
     document.body.style.overflow = 'hidden'
-    document.body.style.overscrollBehavior = 'none'
   }
   // leave ref area.
   const leaveControll = () => {
     document.body.style.overflow = 'auto'
-    document.body.style.overscrollBehavior = 'auto'
   }
 
   // Added event when component is mounted.
@@ -171,17 +170,15 @@ export const MagicCircle = ({
     if (!range) return
 
     // Add event.
-    range.addEventListener('mouseover', enterControll)
+    range.addEventListener('mouseover', enterControll, { passive: false })
     range.addEventListener('mouseout', leaveControll)
-    range.addEventListener('touchstart', enterControll)
-    range.addEventListener('touchmove', enterControll)
+    range.addEventListener('touchmove', enterControll, { passive: false })
     range.addEventListener('touchend', leaveControll)
 
     // Clean up event when component is unmount.
     return () => {
       range.removeEventListener('mouseover', enterControll)
       range.removeEventListener('mouseout', leaveControll)
-      range.removeEventListener('touchstart', enterControll)
       range.removeEventListener('touchmove', enterControll)
       range.removeEventListener('touchend', leaveControll)
     }
