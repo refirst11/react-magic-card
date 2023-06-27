@@ -174,6 +174,7 @@ export const MagicCircle = ({
     range.addEventListener('mouseover', enterControll)
     range.addEventListener('mouseout', leaveControll)
     range.addEventListener('touchstart', enterControll)
+    range.addEventListener('touchmove', enterControll)
     range.addEventListener('touchend', leaveControll)
 
     // Clean up event when component is unmount.
@@ -181,6 +182,7 @@ export const MagicCircle = ({
       range.removeEventListener('mouseover', enterControll)
       range.removeEventListener('mouseout', leaveControll)
       range.removeEventListener('touchstart', enterControll)
+      range.removeEventListener('touchmove', enterControll)
       range.removeEventListener('touchend', leaveControll)
     }
   }, [])
