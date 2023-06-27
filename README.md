@@ -59,6 +59,10 @@ function MyComponent() {
 }
 ```
 
+## use LazyMotion
+
+because It is using 「m」 need to wrap it with LazyMotion at the root layout level.
+
 ## Properties
 
 - data: An array a images property objects for src and alt.
