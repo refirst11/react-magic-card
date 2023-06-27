@@ -35,7 +35,7 @@ function MyComponent() {
 
   return (
     <MagicCircle
-      data={images}
+      images={images}
       width={120}
       height={120}
       radius={100}
