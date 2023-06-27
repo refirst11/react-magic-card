@@ -51,7 +51,7 @@ type TransitionProperty =
     }
 
 type MagicCircleProps = {
-  data: ImageProperty[]
+  images: ImageProperty[]
   width: number
   height: number
   radius: number
@@ -68,7 +68,7 @@ type MagicCircleProps = {
 }
 
 export const MagicCircle = ({
-  data,
+  images,
   width,
   height,
   radius,
@@ -84,91 +84,109 @@ export const MagicCircle = ({
   classImageUnique
 }: MagicCircleProps) => {
   const [count, setCount] = useState(0)
+  const [touchStartY, setTouchStartY] = useState(0)
   const [hasDelayed, setHasDelayed] = useState(true)
-  const [images, setImages] = useState(data)
   const [select, setSelect] = useState(start)
   const ref = useRef<HTMLDivElement>(null)
 
-  const shiftRight = useCallback(() => {
-    setImages(arr => {
-      const lastElement = arr.pop() as ImageProperty
-      arr.unshift(lastElement)
-      setSelect(select == images.length - 1 ? 0 : select + 1)
-
-      return arr
-    })
-  }, [images.length, select])
-
-  const shiftLeft = useCallback(() => {
-    setImages(arr => {
-      const firstElement = arr.shift() as ImageProperty
-      arr.push(firstElement)
-      setSelect(select == 0 ? images.length - 1 : select - 1)
-
-      return arr
-    })
-  }, [images.length, select])
-
   const centralAngle = ((2 * Math.PI) / images.length) * (180 / Math.PI)
 
-  const controlRotation = useCallback(
+  // Functions of the rotation and select and delay.
+  // turn left
+  const shiftLeft = useCallback(() => {
+    setHasDelayed(false)
+    setSelect(select == images.length - 1 ? 0 : select + 1)
+    if (dynamic) return setCount(count - centralAngle)
+  }, [centralAngle, count, dynamic, images.length, select])
+  // turn right
+  const shiftRight = useCallback(() => {
+    setHasDelayed(false)
+    setSelect(select == 0 ? images.length - 1 : select - 1)
+    if (dynamic) return setCount(count + centralAngle)
+  }, [centralAngle, count, dynamic, images.length, select])
+
+  // Function of the desktop.
+  const handleWheel = useCallback(
     (e: WheelEvent) => {
       const delta = e.deltaY
-
-      if (delta > 0) {
-        setHasDelayed(false)
-        for (let i = 0; i < images.length; i++) shiftRight()
-        if (dynamic) return setCount(count - centralAngle)
-      }
-      if (delta < 0) {
-        setHasDelayed(false)
-        for (let i = 0; i < images.length; i++) shiftLeft()
-        if (dynamic) return setCount(count + centralAngle)
-      }
+      if (delta > 0) shiftLeft()
+      if (delta < 0) shiftRight()
     },
-    [dynamic, count, centralAngle, images.length, shiftRight, shiftLeft]
+    [shiftLeft, shiftRight]
   )
 
+  // Get a start y position in touchStartY.
+  const handleTouchStart = (event: TouchEvent) => {
+    const touch = event.touches[0]
+    setTouchStartY(touch.clientY)
+  }
+  // Function of the mobile.
+  const handleTouchMove = useCallback(
+    (event: TouchEvent) => {
+      const touch = event.touches[0]
+      const deltaY = touch.clientY - touchStartY
+      if (deltaY > 0) shiftLeft()
+      if (deltaY < 0) shiftRight()
+    },
+    [shiftLeft, shiftRight, touchStartY]
+  )
+
+  // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
     const range = ref.current
+    if (!range || !hasDelayed) return
+
     const timeId = setTimeout(() => {
       setHasDelayed(true)
     }, wheelDelay)
 
-    if (!range || !hasDelayed) return
-    range.addEventListener('wheel', controlRotation, { passive: false })
+    // Add handle event when component mount and deps update.
+    range.addEventListener('wheel', handleWheel)
+    range.addEventListener('touchstart', handleTouchStart)
+    range.addEventListener('touchmove', handleTouchMove)
 
+    // Clean up event and timeId when component is unmount.
     return () => {
-      range.removeEventListener('wheel', controlRotation)
+      range.removeEventListener('wheel', handleWheel)
+      range.removeEventListener('touchstart', handleTouchStart)
+      range.removeEventListener('touchmove', handleTouchMove)
       clearTimeout(timeId)
     }
-  }, [count, hasDelayed, controlRotation, wheelDelay])
+  }, [handleTouchMove, handleWheel, hasDelayed, wheelDelay])
 
-  const enterControll = () => {
+  // Functions of the controller.
+  // entry ref area.
+  const enterControll = (e: Event) => {
+    e.preventDefault()
     document.body.style.overflow = 'hidden'
   }
-
+  // leave ref area.
   const leaveControll = () => {
     document.body.style.overflow = 'auto'
   }
 
+  // Added event when component is mounted.
   useEffect(() => {
     const range = ref.current
     if (!range) return
 
-    range.addEventListener('mouseover', enterControll)
+    // Add event.
+    range.addEventListener('mouseover', enterControll, { passive: false })
     range.addEventListener('mouseout', leaveControll)
-    range.addEventListener('touchmove', leaveControll, { passive: false })
+    range.addEventListener('touchstart', enterControll, { passive: false })
+    range.addEventListener('touchout', leaveControll)
 
+    // Clean up event when component is unmount.
     return () => {
       range.removeEventListener('mouseover', enterControll)
       range.removeEventListener('mouseout', leaveControll)
-      range.removeEventListener('touchmove', leaveControll)
+      range.removeEventListener('touchstart', enterControll)
+      range.removeEventListener('touchout', leaveControll)
     }
   }, [])
 
   // angle between images.
-  const angle = parseFloat((2 * Math.PI).toFixed(15)) / data.length
+  const angle = parseFloat((2 * Math.PI).toFixed(15)) / images.length
 
   return (
     <LazyMotion features={domAnimation}>
