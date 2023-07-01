@@ -34,18 +34,22 @@ export const MagicStraight = ({
   const div1Ref = useRef<HTMLDivElement>(null)
   const div2Ref = useRef<HTMLDivElement>(null)
 
-  const shiftRight = useCallback(() => {
-    setSelect(select == images.length - 1 ? 0 : select + 1)
-    setHasShift(true)
-    setHasDelayed(false)
-  }, [images.length, select])
-
+  // Functions of the swipe and wheel a shifting.
+  // turn left
   const shiftLeft = useCallback(() => {
     setSelect(select == 0 ? images.length - 1 : select - 1)
     setHasShift(false)
     setHasDelayed(false)
   }, [images.length, select])
 
+  // turn right
+  const shiftRight = useCallback(() => {
+    setSelect(select == images.length - 1 ? 0 : select + 1)
+    setHasShift(true)
+    setHasDelayed(false)
+  }, [images.length, select])
+
+  // Wheel function of the desktop.
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       const delta = e.deltaY
@@ -55,26 +59,38 @@ export const MagicStraight = ({
     [shiftLeft, shiftRight]
   )
 
+  // Get a start y and x position in touchStart Y and X.
   const handleTouchStart = (event: TouchEvent) => {
     const touch = event.touches[0]
     setTouchStartY(touch.clientY)
     setTouchStartX(touch.clientX)
   }
 
+  // Swipe Function of the mobile.
   const handleTouchMove = useCallback(
     (event: TouchEvent) => {
       const touch = event.touches[0]
-      const delta = hasPick
+      const delta = !vertical
         ? touch.clientX - touchStartX
-        : vertical
-        ? touch.clientY - touchStartY
-        : touch.clientX - touchStartX
-      if (delta > 0) shiftRight()
-      if (delta < 0) shiftLeft()
+        : touch.clientY - touchStartY
+
+      if (delta > 0) {
+        shiftRight()
+        !vertical && setTouchStartX(delta - 1)
+        vertical &&
+          (hasPick ? setTouchStartX(delta - 1) : setTouchStartY(delta - 1))
+      }
+      if (delta < 0) {
+        shiftLeft()
+        !vertical && setTouchStartX(delta + 1)
+        vertical &&
+          (hasPick ? setTouchStartX(delta + 1) : setTouchStartY(delta + 1))
+      }
     },
     [hasPick, shiftLeft, shiftRight, touchStartX, touchStartY, vertical]
   )
 
+  // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
     const elm1Div = div1Ref.current
     const elm2Div = div2Ref.current
@@ -83,6 +99,7 @@ export const MagicStraight = ({
       setHasDelayed(true)
     }, wheelDelay)
 
+    // Add handle event when component mount and deps update.
     elms.forEach(elm => {
       if (!elm || !hasDelayed) return
       elm.addEventListener('wheel', handleWheel, { passive: true })
@@ -90,6 +107,7 @@ export const MagicStraight = ({
       elm.addEventListener('touchmove', handleTouchMove, { passive: true })
     })
 
+    // Clean up event and timeId when component is unmount.
     return () => {
       elms.forEach(elm => {
         if (!elm) return
@@ -101,20 +119,25 @@ export const MagicStraight = ({
     }
   }, [handleTouchMove, handleWheel, hasDelayed, wheelDelay])
 
+  // Functions of the area controller.
+  // entry ref area.
   const enterControll = (e: Event) => {
     e.preventDefault()
     document.body.style.overflow = 'hidden'
   }
 
+  // leave ref area.
   const leaveControll = () => {
     document.body.style.overflow = 'auto'
   }
 
+  // Added event when component is mounted.
   useEffect(() => {
     const elm1Div = div1Ref.current
     const elm2Div = div2Ref.current
     const elms = [elm1Div, elm2Div]
 
+    // Add event.
     elms.forEach(elm => {
       if (!elm) return
       elm.addEventListener('mouseover', enterControll)
@@ -122,6 +145,8 @@ export const MagicStraight = ({
       elm.addEventListener('touchmove', enterControll)
       elm.addEventListener('touchend', leaveControll)
     })
+
+    // Clean up event when component is unmount.
     return () => {
       elms.forEach(elm => {
         if (!elm) return
@@ -133,9 +158,10 @@ export const MagicStraight = ({
     }
   }, [])
 
+  // Average calculation.
   let total = 0
   for (let i = 1; i < images.length; i++) total += i
-  const Total = total / images.length
+  const average = total / images.length
 
   const clasess = className + ' ' + styles.outer
 
@@ -162,23 +188,19 @@ export const MagicStraight = ({
               animate={{
                 y: hasSelect
                   ? vertical
-                    ? (Total - index) * height +
-                      (Total - index) * (margin * 2) +
+                    ? (average - index) * height +
+                      (average - index) * (margin * 2) +
                       selectOffsetY
                     : selectOffsetY
                   : 0,
                 x: hasSelect
                   ? !vertical
-                    ? (Total - index) * width +
-                      (Total - index) * (margin * 2) +
+                    ? (average - index) * width +
+                      (average - index) * (margin * 2) +
                       selectOffsetX
                     : selectOffsetX
                   : 0,
-                scale: hasSelect
-                  ? hasPick
-                    ? 0
-                    : animate?.selectScale
-                  : animate?.scale,
+                scale: hasSelect ? animate?.selectScale : animate?.scale,
                 rotateY: hasSelect ? animate?.selectRotateY : animate?.rotateY,
                 rotateX: hasSelect ? animate?.selectRotateX : animate?.rotateX,
                 rotateZ: hasSelect ? animate?.selectRotateZ : animate?.rotateZ,
@@ -219,7 +241,6 @@ export const MagicStraight = ({
           )
         })}
       </div>
-      <button onClick={() => shiftRight()}>{hasPick ? 'true' : 'false'}</button>
       <PickImage
         onClick={() => setHasPick(false)}
         hasPick={hasPick}
