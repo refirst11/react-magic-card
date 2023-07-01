@@ -1,0 +1,108 @@
+import type { Ref, MouseEventHandler } from 'react'
+
+type ImageProperty = {
+  src: string
+  alt: string
+}
+
+type AnimationProperty = {
+  scale?: number
+  rotateY?: number
+  rotateX?: number
+  rotateZ?: number
+  opacity?: number
+  selectScale?: number
+  selectRotateY?: number
+  selectRotateX?: number
+  selectRotateZ?: number
+  selectOpacity?: number
+}
+
+type TransitionProperty =
+  | {
+      duration?: number
+      type: undefined
+      ease:
+        | number[]
+        | 'linear'
+        | 'easeIn'
+        | 'easeOut'
+        | 'easeInOut'
+        | 'circIn'
+        | 'circOut'
+        | 'circInOut'
+        | 'backIn'
+        | 'backOut'
+        | 'backInOut'
+        | 'anticipate'
+    }
+  | {
+      duration?: number
+      type?: 'spring'
+      bounce?: number
+      damping?: number
+      mass?: number
+      stiffness?: number
+      velocity?: number
+      restSpeed?: number
+      restDelta?: number
+    }
+
+type PickProperty = {
+  classPick?: string
+  white?: boolean
+  alpha?: number
+  blur?: number
+  scale?: number
+  offset?: number
+}
+
+type MagicProperty = {
+  images: ImageProperty[]
+  height: number
+  width: number
+  controller: number
+  start: number
+  wheelDelay: number
+  className?: string
+  classImage?: string
+  classImageUnique?: string
+  animate?: AnimationProperty
+  initial?: AnimationProperty
+  transition?: TransitionProperty
+  selectCursor?: 'pointer' | 'zoom-in' | 'crosshair' | 'help'
+  pickProperty?: PickProperty
+  pickTransition?: TransitionProperty
+}
+
+export type MagicCircleProps = MagicProperty & {
+  radius: number
+  dynamic?: boolean
+}
+
+export type MagicStraightProps = MagicProperty & {
+  vertical?: boolean
+  margin?: number
+  selectOffsetX?: number
+  selectOffsetY?: number
+}
+
+export type ScaleFilterImageProps = {
+  onClick: MouseEventHandler<HTMLDivElement>
+  classPick?: string
+  hasPick: boolean
+  hasShift: boolean
+  argRef: Ref<HTMLDivElement>
+  argKey: number
+  src: string
+  alt: string
+  width: number
+  height: number
+  zIndex: number
+  white?: boolean
+  alpha?: number
+  blur?: number
+  scale?: number
+  offset?: number
+  transition?: TransitionProperty
+}
