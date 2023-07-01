@@ -25,6 +25,7 @@ export const MagicCircle = ({
 }: MagicCircleProps) => {
   const [count, setCount] = useState(0)
   const [touchStartY, setTouchStartY] = useState(0)
+  const [touchStartX, setTouchStartX] = useState(0)
   const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
@@ -38,18 +39,18 @@ export const MagicCircle = ({
   // turn left
   const shiftLeft = useCallback(() => {
     setSelect(select == images.length - 1 ? 0 : select + 1)
-    setHasShift(true)
+    setHasShift(false)
     setHasDelayed(false)
     if (dynamic) return setCount(count - centralAngle)
-  }, [centralAngle, count, dynamic, images.length, select])
+  }, [centralAngle, count, dynamic, images.length, select, hasShift])
 
   // turn right
   const shiftRight = useCallback(() => {
     setSelect(select == 0 ? images.length - 1 : select - 1)
-    setHasShift(false)
+    setHasShift(true)
     setHasDelayed(false)
     if (dynamic) return setCount(count + centralAngle)
-  }, [centralAngle, count, dynamic, images.length, select])
+  }, [centralAngle, count, dynamic, images.length, select, hasShift])
 
   // Function of the desktop.
   const handleWheel = useCallback(
@@ -61,18 +62,23 @@ export const MagicCircle = ({
     [shiftLeft, shiftRight]
   )
 
-  // Get a start y position in touchStartY.
+  // Get a start y and x position in touchStart Y and X.
   const handleTouchStart = (event: TouchEvent) => {
     const touch = event.touches[0]
     setTouchStartY(touch.clientY)
+    setTouchStartX(touch.clientX)
   }
   // Function of the mobile.
   const handleTouchMove = useCallback(
     (event: TouchEvent) => {
       const touch = event.touches[0]
-      const deltaY = touch.clientY - touchStartY
-      if (deltaY > 0) shiftLeft()
-      if (deltaY < 0) shiftRight()
+      const delta = hasPick ? touch.clientX : touch.clientY
+
+      if (delta > (touchStartY || touchStartX)) shiftRight()
+      if (delta < (touchStartY || touchStartX)) shiftLeft()
+
+      setTouchStartX(delta)
+      setTouchStartY(delta)
     },
     [shiftLeft, shiftRight, touchStartY]
   )
@@ -106,7 +112,7 @@ export const MagicCircle = ({
     }
   }, [handleTouchMove, handleWheel, hasDelayed, wheelDelay])
 
-  // Functions of the controller.
+  // Functions of the area controller.
   // entry ref area.
   const enterControll = (e: Event) => {
     e.preventDefault()
@@ -144,7 +150,7 @@ export const MagicCircle = ({
     }
   }, [])
 
-  // angle between images.
+  // Angle between.
   const angle = parseFloat((2 * Math.PI).toFixed(15)) / images.length
 
   return (
@@ -170,11 +176,7 @@ export const MagicCircle = ({
                 key={index}
                 animate={{
                   rotate: -count,
-                  scale: hasSelect
-                    ? hasPick
-                      ? 0
-                      : animate?.selectScale
-                    : animate?.scale,
+                  scale: hasSelect ? animate?.selectScale : animate?.scale,
                   rotateY: hasSelect
                     ? animate?.selectRotateY
                     : animate?.rotateY,
