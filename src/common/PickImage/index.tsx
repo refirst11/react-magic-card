@@ -32,7 +32,6 @@ const PickImage = ({
         zIndex: zIndex,
         opacity: hasPick ? 1 : 0,
         pointerEvents: hasPick ? 'auto' : 'none',
-        touchAction: hasPick ? 'auto' : 'none',
         visibility: hasPick ? 'visible' : 'hidden',
         backdropFilter: `blur(${blur}px)`,
         background: white
