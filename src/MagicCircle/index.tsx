@@ -145,7 +145,7 @@ export const MagicCircle = ({
         elm.removeEventListener('mouseover', enterControll)
         elm.removeEventListener('mouseout', leaveControll)
         elm.removeEventListener('touchmove', enterControll)
-        elm.addEventListener('touchend', leaveControll)
+        elm.removeEventListener('touchend', leaveControll)
       })
     }
   }, [])
