@@ -1,6 +1,6 @@
 {
   "name": "react-magic-card",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "image gallery component with framer motion",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -15,7 +15,7 @@
     "copy-css": "npm run copy-css1 && npm run copy-css2 && npm run copy-css3",
     "copy-css1": "cp src/MagicCircle/styles.module.css dist/MagicCircle/styles.module.css",
     "copy-css2": "cp src/MagicStraight/styles.module.css dist/MagicStraight/styles.module.css",
-    "copy-css3": "cp src/common/ScaleFilterImage/styles.module.css dist/common/ScaleFilterImage/styles.module.css",
+    "copy-css3": "cp src/common/PickImage/styles.module.css dist/common/PickImage/styles.module.css",
     "test": "test"
   },
   "keywords": [
