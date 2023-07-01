@@ -1,107 +1,53 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { m, LazyMotion, domAnimation } from 'framer-motion'
-import './main.css'
-
-type ImageProperty = {
-  src: string
-  alt: string
-}
-
-type AnimationProperty = {
-  scale?: number
-  opacity?: number
-  rotateY?: number
-  rotateX?: number
-  rotateZ?: number
-  selectScale?: number
-  selectOpacity?: number
-  selectRotateY?: number
-  selectRotateX?: number
-  selectRotateZ?: number
-}
-
-type TransitionProperty =
-  | {
-      duration?: number
-      type: undefined
-      ease:
-        | number[]
-        | 'linear'
-        | 'easeIn'
-        | 'easeOut'
-        | 'easeInOut'
-        | 'circIn'
-        | 'circOut'
-        | 'circInOut'
-        | 'backIn'
-        | 'backOut'
-        | 'backInOut'
-        | 'anticipate'
-    }
-  | {
-      duration?: number
-      type?: 'spring'
-      bounce?: number
-      damping?: number
-      mass?: number
-      stiffness?: number
-      velocity?: number
-      restSpeed?: number
-      restDelta?: number
-    }
-
-type MagicCircleProps = {
-  images: ImageProperty[]
-  width: number
-  height: number
-  radius: number
-  controller: number
-  start: number
-  dynamic: boolean
-  wheelDelay: number
-  animate?: AnimationProperty
-  initial?: AnimationProperty
-  transition?: TransitionProperty
-  className?: string
-  classImage?: string
-  classImageUnique?: string
-}
+import type { MagicCircleProps } from '../types'
+import styles from './styles.module.css'
+import PickImage from '../common/PickImage'
 
 export const MagicCircle = ({
   images,
-  width,
   height,
+  width,
   radius,
   controller,
   start,
-  dynamic,
+  dynamic = true,
   wheelDelay,
   animate,
   initial,
   transition,
   className,
   classImage,
-  classImageUnique
+  classImageUnique,
+  selectCursor = 'pointer',
+  pickProperty,
+  pickTransition
 }: MagicCircleProps) => {
   const [count, setCount] = useState(0)
   const [touchStartY, setTouchStartY] = useState(0)
+  const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
-  const ref = useRef<HTMLDivElement>(null)
+  const [hasPick, setHasPick] = useState(false)
+  const div1Ref = useRef<HTMLDivElement>(null)
+  const div2Ref = useRef<HTMLDivElement>(null)
 
   const centralAngle = ((2 * Math.PI) / images.length) * (180 / Math.PI)
 
   // Functions of the rotation and select and delay.
   // turn left
   const shiftLeft = useCallback(() => {
-    setHasDelayed(false)
     setSelect(select == images.length - 1 ? 0 : select + 1)
+    setHasShift(true)
+    setHasDelayed(false)
     if (dynamic) return setCount(count - centralAngle)
   }, [centralAngle, count, dynamic, images.length, select])
+
   // turn right
   const shiftRight = useCallback(() => {
-    setHasDelayed(false)
     setSelect(select == 0 ? images.length - 1 : select - 1)
+    setHasShift(false)
+    setHasDelayed(false)
     if (dynamic) return setCount(count + centralAngle)
   }, [centralAngle, count, dynamic, images.length, select])
 
@@ -133,22 +79,29 @@ export const MagicCircle = ({
 
   // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
-    const range = ref.current
+    const elm1Div = div1Ref.current
+    const elm2Div = div2Ref.current
+    const elms = [elm1Div, elm2Div]
     const timeId = setTimeout(() => {
       setHasDelayed(true)
     }, wheelDelay)
-    if (!range || !hasDelayed) return
 
     // Add handle event when component mount and deps update.
-    range.addEventListener('wheel', handleWheel, { passive: true })
-    range.addEventListener('touchstart', handleTouchStart, { passive: true })
-    range.addEventListener('touchmove', handleTouchMove, { passive: true })
+    elms.forEach(elm => {
+      if (!elm || !hasDelayed) return
+      elm.addEventListener('wheel', handleWheel, { passive: true })
+      elm.addEventListener('touchstart', handleTouchStart, { passive: true })
+      elm.addEventListener('touchmove', handleTouchMove, { passive: true })
+    })
 
     // Clean up event and timeId when component is unmount.
     return () => {
-      range.removeEventListener('wheel', handleWheel)
-      range.removeEventListener('touchstart', handleTouchStart)
-      range.removeEventListener('touchmove', handleTouchMove)
+      elms.forEach(elm => {
+        if (!elm) return
+        elm.removeEventListener('wheel', handleWheel)
+        elm.removeEventListener('touchstart', handleTouchStart)
+        elm.removeEventListener('touchmove', handleTouchMove)
+      })
       clearTimeout(timeId)
     }
   }, [handleTouchMove, handleWheel, hasDelayed, wheelDelay])
@@ -166,21 +119,28 @@ export const MagicCircle = ({
 
   // Added event when component is mounted.
   useEffect(() => {
-    const range = ref.current
-    if (!range) return
+    const elm1Div = div1Ref.current
+    const elm2Div = div2Ref.current
+    const elms = [elm1Div, elm2Div]
 
     // Add event.
-    range.addEventListener('mouseover', enterControll, { passive: false })
-    range.addEventListener('mouseout', leaveControll)
-    range.addEventListener('touchmove', enterControll, { passive: false })
-    range.addEventListener('touchend', leaveControll)
+    elms.forEach(elm => {
+      if (!elm) return
+      elm.addEventListener('mouseover', enterControll)
+      elm.addEventListener('mouseout', leaveControll)
+      elm.addEventListener('touchmove', enterControll)
+      elm.addEventListener('touchend', leaveControll)
+    })
 
     // Clean up event when component is unmount.
     return () => {
-      range.removeEventListener('mouseover', enterControll)
-      range.removeEventListener('mouseout', leaveControll)
-      range.removeEventListener('touchmove', enterControll)
-      range.removeEventListener('touchend', leaveControll)
+      elms.forEach(elm => {
+        if (!elm) return
+        elm.removeEventListener('mouseover', enterControll)
+        elm.removeEventListener('mouseout', leaveControll)
+        elm.removeEventListener('touchmove', enterControll)
+        elm.addEventListener('touchend', leaveControll)
+      })
     }
   }, [])
 
@@ -190,8 +150,8 @@ export const MagicCircle = ({
   return (
     <LazyMotion features={domAnimation}>
       <m.div
-        ref={ref}
-        className={className + ' ' + 'outer'}
+        ref={div1Ref}
+        className={className + ' ' + styles.outer}
         style={{
           width: radius * 2 + controller + 'px',
           height: radius * 2 + controller + 'px'
@@ -200,7 +160,7 @@ export const MagicCircle = ({
         transition={{ duration: transition?.duration }}
       >
         <div
-          className="inner"
+          className={styles.inner}
           style={{ width: radius * 2 + 'px', height: radius * 2 + 'px' }}
         >
           {images.map((image, index) => {
@@ -209,44 +169,51 @@ export const MagicCircle = ({
               <m.img
                 key={index}
                 animate={{
-                  scale: hasSelect ? animate?.selectScale : animate?.scale,
-                  opacity: hasSelect
-                    ? animate?.selectOpacity
-                    : animate?.opacity,
-                  rotateX: hasSelect
-                    ? animate?.selectRotateX
-                    : animate?.rotateX,
+                  rotate: -count,
+                  scale: hasSelect
+                    ? hasPick
+                      ? 0
+                      : animate?.selectScale
+                    : animate?.scale,
                   rotateY: hasSelect
                     ? animate?.selectRotateY
                     : animate?.rotateY,
+                  rotateX: hasSelect
+                    ? animate?.selectRotateX
+                    : animate?.rotateX,
                   rotateZ: hasSelect
                     ? animate?.selectRotateZ
                     : animate?.rotateZ,
-
-                  rotate: -count
+                  opacity: hasSelect
+                    ? hasPick
+                      ? 0
+                      : animate?.selectOpacity
+                    : animate?.opacity
                 }}
                 initial={{
+                  rotate: -count,
                   scale: hasSelect ? initial?.selectScale : initial?.scale,
-                  opacity: hasSelect
-                    ? initial?.selectOpacity
-                    : initial?.opacity,
-                  rotateX: hasSelect
-                    ? initial?.selectRotateX
-                    : initial?.rotateX,
                   rotateY: hasSelect
                     ? initial?.selectRotateY
                     : initial?.rotateY,
+                  rotateX: hasSelect
+                    ? initial?.selectRotateX
+                    : initial?.rotateX,
                   rotateZ: hasSelect
                     ? initial?.selectRotateZ
                     : initial?.rotateZ,
-                  rotate: -count
+                  opacity: hasSelect ? initial?.selectOpacity : initial?.opacity
                 }}
                 transition={transition}
-                onClick={() => setSelect(index)}
+                onClick={() => {
+                  setSelect(index)
+                  hasSelect && setHasPick(true)
+                }}
                 className={classImage + ' ' + classImageUnique + index}
                 src={image.src}
                 alt={image.alt}
                 style={{
+                  cursor: hasSelect ? selectCursor : 'default',
                   width: width + 'px',
                   height: height + 'px',
                   left:
@@ -265,6 +232,25 @@ export const MagicCircle = ({
           })}
         </div>
       </m.div>
+      <PickImage
+        onClick={() => setHasPick(false)}
+        hasPick={hasPick}
+        classPick={pickProperty?.classPick}
+        white={pickProperty?.white}
+        alpha={pickProperty?.alpha}
+        blur={pickProperty?.blur}
+        scale={pickProperty?.scale}
+        offset={pickProperty?.offset}
+        hasShift={hasShift}
+        argRef={div2Ref}
+        argKey={select}
+        src={images[select].src}
+        alt={images[select].alt}
+        width={width}
+        height={height}
+        transition={pickTransition}
+        zIndex={images.length + 1}
+      />
     </LazyMotion>
   )
 }
