@@ -30,12 +30,14 @@ const PickImage = ({
       className={styles.full_size}
       animate={{
         zIndex: zIndex,
+        opacity: hasPick ? 1 : 0,
+        pointerEvents: hasPick ? 'auto' : 'none',
+        touchAction: hasPick ? 'auto' : 'none',
+        visibility: hasPick ? 'visible' : 'hidden',
+        backdropFilter: `blur(${blur}px)`,
         background: white
           ? `rgba(255, 255, 255, ${alpha})`
-          : `rgba(0, 0, 0, ${alpha})`,
-        backdropFilter: `blur(${blur}px)`,
-        opacity: hasPick ? 1 : 0,
-        pointerEvents: hasPick ? 'auto' : 'none'
+          : `rgba(0, 0, 0, ${alpha})`
       }}
       initial={{ background: 'none' }}
       transition={transition}
