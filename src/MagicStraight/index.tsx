@@ -70,12 +70,34 @@ export const MagicStraight = ({
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
       const touch = e.touches[0]
-      const delta = hasPick ? touch.clientX : touch.clientY
+      const delta = hasPick
+        ? touch.clientX
+        : !vertical
+        ? touch.clientX
+        : touch.clientY
 
-      if (hasPick ? delta < touchStartX : delta < touchStartY) shiftLeft()
-      if (hasPick ? delta > touchStartX : delta > touchStartY) shiftRight()
+      if (
+        hasPick
+          ? delta < touchStartX
+          : !vertical
+          ? delta < touchStartX
+          : delta < touchStartY
+      )
+        shiftLeft()
+      if (
+        hasPick
+          ? delta > touchStartX
+          : !vertical
+          ? delta > touchStartX
+          : delta > touchStartY
+      )
+        shiftRight()
 
-      hasPick ? setTouchStartX(delta) : setTouchStartY(delta)
+      hasPick
+        ? setTouchStartX(delta)
+        : !vertical
+        ? setTouchStartX(delta)
+        : setTouchStartY(delta)
     },
     [hasPick, shiftLeft, shiftRight, touchStartX, touchStartY, vertical]
   )
