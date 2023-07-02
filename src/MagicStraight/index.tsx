@@ -13,7 +13,8 @@ export const MagicStraight = ({
   wheelDelay,
   vertical,
   className,
-  classImage,
+  classImages,
+  classImageSelect,
   classImageUnique,
   animate,
   initial,
@@ -21,7 +22,6 @@ export const MagicStraight = ({
   margin = 0,
   selectOffsetX = 0,
   selectOffsetY = 0,
-  selectCursor = 'pointer',
   pickProperty,
   pickTransition
 }: MagicStraightProps) => {
@@ -53,8 +53,8 @@ export const MagicStraight = ({
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       const delta = e.deltaY
-      if (delta > 0) shiftRight()
       if (delta < 0) shiftLeft()
+      if (delta > 0) shiftRight()
     },
     [shiftLeft, shiftRight]
   )
@@ -76,8 +76,8 @@ export const MagicStraight = ({
         ? touch.clientX
         : touch.clientY
 
-      if (delta > (touchStartX || touchStartY)) shiftRight()
       if (delta < (touchStartX || touchStartY)) shiftLeft()
+      if (delta > (touchStartX || touchStartY)) shiftRight()
 
       setTouchStartX(delta)
       setTouchStartY(delta)
@@ -135,9 +135,9 @@ export const MagicStraight = ({
     // Add event.
     elms.forEach(elm => {
       if (!elm) return
-      elm.addEventListener('mouseover', enterControll)
+      elm.addEventListener('mouseover', enterControll, { passive: false })
       elm.addEventListener('mouseout', leaveControll)
-      elm.addEventListener('touchmove', enterControll)
+      elm.addEventListener('touchmove', enterControll, { passive: false })
       elm.addEventListener('touchend', leaveControll)
     })
 
@@ -158,13 +158,11 @@ export const MagicStraight = ({
   for (let i = 1; i < images.length; i++) total += i
   const average = total / images.length
 
-  const clasess = className + ' ' + styles.outer
-
   return (
     <LazyMotion features={domAnimation}>
       <div
         ref={div1Ref}
-        className={clasess}
+        className={className + ' ' + styles.outer}
         style={{
           width: !vertical ? height + controller + 'px' : 'fit-content',
           height: vertical ? width + controller + 'px' : 'fit-content',
@@ -217,7 +215,14 @@ export const MagicStraight = ({
                 setSelect(index)
                 hasSelect && setHasPick(true)
               }}
-              className={classImage + ' ' + classImageUnique + index}
+              className={
+                classImages +
+                ' ' +
+                (hasSelect && classImageSelect) +
+                ' ' +
+                classImageUnique +
+                index
+              }
               src={image.src}
               alt={image.alt}
               role="button"
@@ -227,7 +232,6 @@ export const MagicStraight = ({
                     ? 0
                     : images.length + 1
                   : reverseIndex,
-                cursor: hasSelect ? selectCursor : 'default',
                 width: width + 'px',
                 height: height + 'px',
                 margin: vertical ? margin + 'px' + ' 0' : '0 ' + margin + 'px'

@@ -12,14 +12,15 @@ export const MagicCircle = ({
   controller,
   start,
   dynamic = true,
+  clockwise = true,
   wheelDelay,
   animate,
   initial,
   transition,
   className,
-  classImage,
+  classImages,
+  classImageSelect,
   classImageUnique,
-  selectCursor = 'pointer',
   pickProperty,
   pickTransition
 }: MagicCircleProps) => {
@@ -38,28 +39,28 @@ export const MagicCircle = ({
   // Functions of the rotation and select and delay.
   // turn left
   const shiftLeft = useCallback(() => {
-    setSelect(select == images.length - 1 ? 0 : select + 1)
-    setHasShift(false)
-    setHasDelayed(false)
-    if (dynamic) return setCount(count - centralAngle)
-  }, [centralAngle, count, dynamic, images.length, select])
-
-  // turn right
-  const shiftRight = useCallback(() => {
     setSelect(select == 0 ? images.length - 1 : select - 1)
     setHasShift(true)
     setHasDelayed(false)
     if (dynamic) return setCount(count + centralAngle)
   }, [centralAngle, count, dynamic, images.length, select])
 
+  // turn right
+  const shiftRight = useCallback(() => {
+    setSelect(select == images.length - 1 ? 0 : select + 1)
+    setHasShift(false)
+    setHasDelayed(false)
+    if (dynamic) return setCount(count - centralAngle)
+  }, [centralAngle, count, dynamic, images.length, select])
+
   // Function of the desktop.
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       const delta = e.deltaY
-      if (delta > 0) shiftLeft()
-      if (delta < 0) shiftRight()
+      if (delta < 0) clockwise ? shiftLeft() : shiftRight()
+      if (delta > 0) clockwise ? shiftRight() : shiftLeft()
     },
-    [shiftLeft, shiftRight]
+    [clockwise, shiftLeft, shiftRight]
   )
 
   // Get a start y and x position in touchStart Y and X.
@@ -74,13 +75,15 @@ export const MagicCircle = ({
       const touch = event.touches[0]
       const delta = hasPick ? touch.clientX : touch.clientY
 
-      if (delta > (touchStartY || touchStartX)) shiftRight()
-      if (delta < (touchStartY || touchStartX)) shiftLeft()
+      if (delta < (touchStartY || touchStartX))
+        clockwise ? shiftLeft() : shiftRight()
+      if (delta > (touchStartY || touchStartX))
+        clockwise ? shiftRight() : shiftLeft()
 
       setTouchStartX(delta)
       setTouchStartY(delta)
     },
-    [hasPick, shiftLeft, shiftRight, touchStartX, touchStartY]
+    [clockwise, hasPick, shiftLeft, shiftRight, touchStartX, touchStartY]
   )
 
   // Main functional, exit function if ref and hasDelayed does not exist.
@@ -132,9 +135,9 @@ export const MagicCircle = ({
     // Add event.
     elms.forEach(elm => {
       if (!elm) return
-      elm.addEventListener('mouseover', enterControll)
+      elm.addEventListener('mouseover', enterControll, { passive: false })
       elm.addEventListener('mouseout', leaveControll)
-      elm.addEventListener('touchmove', enterControll)
+      elm.addEventListener('touchmove', enterControll, { passive: false })
       elm.addEventListener('touchend', leaveControll)
     })
 
@@ -211,11 +214,17 @@ export const MagicCircle = ({
                   setSelect(index)
                   hasSelect && setHasPick(true)
                 }}
-                className={classImage + ' ' + classImageUnique + index}
+                className={
+                  classImages +
+                  ' ' +
+                  (hasSelect && classImageSelect) +
+                  ' ' +
+                  classImageUnique +
+                  index
+                }
                 src={image.src}
                 alt={image.alt}
                 style={{
-                  cursor: hasSelect ? selectCursor : 'default',
                   width: width + 'px',
                   height: height + 'px',
                   left:
