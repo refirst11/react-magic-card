@@ -138,7 +138,6 @@ export const MagicStraight = ({
       elm.addEventListener('mouseover', enterControll)
       elm.addEventListener('mouseout', leaveControll)
       elm.addEventListener('touchmove', enterControll)
-      elm.addEventListener('touchcancel', leaveControll)
       elm.addEventListener('touchend', leaveControll)
     })
 
@@ -149,7 +148,6 @@ export const MagicStraight = ({
         elm.removeEventListener('mouseover', enterControll)
         elm.removeEventListener('mouseout', leaveControll)
         elm.removeEventListener('touchmove', enterControll)
-        elm.removeEventListener('touchcancel', leaveControll)
         elm.removeEventListener('touchend', leaveControll)
       })
     }
@@ -239,7 +237,10 @@ export const MagicStraight = ({
         })}
       </div>
       <PickImage
-        onClick={() => setHasPick(false)}
+        onClick={() => {
+          leaveControll()
+          setHasPick(false)
+        }}
         hasPick={hasPick}
         classPick={pickProperty?.classPick}
         white={pickProperty?.white}
