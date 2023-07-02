@@ -22,6 +22,13 @@ const PickImage = ({
   offset = 200,
   transition
 }: ScaleFilterImageProps) => {
+  const backdropFilter = hasPick ? `blur(${blur}px)` : undefined
+  const background = hasPick
+    ? white
+      ? `rgba(255, 255, 255, ${alpha})`
+      : `rgba(0, 0, 0, ${alpha})`
+    : undefined
+
   return (
     <m.div
       role="button"
@@ -32,12 +39,9 @@ const PickImage = ({
         zIndex: zIndex,
         opacity: hasPick ? 1 : 0,
         pointerEvents: hasPick ? 'auto' : 'none',
-        backdropFilter: `blur(${blur}px)`,
-        background: white
-          ? `rgba(255, 255, 255, ${alpha})`
-          : `rgba(0, 0, 0, ${alpha})`
+        backdropFilter: backdropFilter,
+        background: background
       }}
-      initial={{ background: 'none' }}
       transition={transition}
     >
       <m.img
