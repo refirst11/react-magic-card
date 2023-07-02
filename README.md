@@ -54,40 +54,42 @@ function MyComponent() {
         selectRotateZ: -10
       }}
       transition={{ duration: 0.2 }}
-      pickTransition={{ duration: 0.4 }}
-      pickProperty={{ white: true, alpha: 0.4, blur: 4, scale: 2, offset: 220 }}
+      pickTransition={{ duration: 0.2 }}
+      pickProperty={{ white: true }}
     />
   )
 }
 ```
 
-| Property         | Explanation                                                              |
+| Property         | Meaning                                                                  |
 | ---------------- | ------------------------------------------------------------------------ |
 | images           | array of images and objects containing the src and alt properties.       |
-| width            | width of a single image.                                                 |
-| height           | height of a single image.                                                |
+| width            | width of the single image.                                               |
+| height           | height of the single image.                                              |
 | start            | index number of the starting scale position.                             |
 | controller       | diameter plus the value of the controller is the size of the controller. |
-| className        | class name of the component.                                             |
-| classImage       | class name of the images.                                                |
-| classImageUnique | index number is assigned to the end of the class name set for this.      |
+| className        | className of the component.                                              |
+| classImages      | className of the images.                                                 |
+| classImageSelect | className of the select image.                                           |
+| classImageUnique | className of the index number is assigned to the end.                    |
 | animate          | object in the animation property.                                        |
 | initial          | object in the animation property.                                        |
 | transition       | object in the transition property.                                       |
 | pickTransition   | object in the transition property.                                       |
 | pickProperty     | object in the pick property.                                             |
 
-| Only in MagicCircle | Explanation                                     |
-| ------------------- | ----------------------------------------------- |
-| dynamic             | indicating whether dynamic rotation is allowed. |
-| radius              | radius of the circle.                           |
+| Only MagicCircle | Meaning                                              |
+| ---------------- | ---------------------------------------------------- |
+| radius           | radius of the circle.                                |
+| dynamic          | dynamic or static for rotation the default true.     |
+| clockwise        | direction of rotation when dynamic the default true. |
 
-| Only in MagicStraight | Explanation                         |
-| --------------------- | ----------------------------------- |
-| vertical              | vertical or horizontal boolean flag |
-| margin                | spacing of the between images       |
-| selectOffsetX         | X-axis position                     |
-| selectOffsetY         | Y-axis position                     |
+| Only MagicStraight | Meaning                                 |
+| ------------------ | --------------------------------------- |
+| vertical           | vertical or horizontal the default true |
+| margin             | spacing of the between images           |
+| selectOffsetX      | X-axis position                         |
+| selectOffsetY      | Y-axis position                         |
 
 ## Animation property
 
@@ -108,14 +110,14 @@ It Inherits framer motion transition properties other than intera.
 
 ## Pick property
 
-| Property  | Explanation                                                |
-| --------- | ---------------------------------------------------------- |
-| classPick | class name of the pick image                               |
-| white     | white or black boolean flag for background                 |
-| alpha     | background transparency a number between 0 ~ 1             |
-| blur      | blur intensity a number between 1 ~ 20 a preferred         |
-| scale     | scale of the pick image                                    |
-| offset    | offset of the appearance position from the center position |
+| Property  | Meaning                                                   |
+| --------- | --------------------------------------------------------- |
+| classPick | class name of the pick image                              |
+| white     | white or black for background the default true            |
+| alpha     | background transparency of a number between 0 ~ 1         |
+| blur      | blur intensity of a number between 1 ~ 20 a preferred     |
+| scale     | scale of the pick image                                   |
+| offset    | offset of an appearance position from the center position |
 
 ## License
 
