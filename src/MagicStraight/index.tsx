@@ -70,7 +70,11 @@ export const MagicStraight = ({
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
       const touch = e.touches[0]
-      const delta = !vertical ? touch.clientX : touch.clientY
+      const delta = hasPick
+        ? touch.clientX
+        : !vertical
+        ? touch.clientX
+        : touch.clientY
 
       if (delta > (touchStartX || touchStartY)) shiftRight()
       if (delta < (touchStartX || touchStartY)) shiftLeft()
@@ -134,6 +138,7 @@ export const MagicStraight = ({
       elm.addEventListener('mouseover', enterControll)
       elm.addEventListener('mouseout', leaveControll)
       elm.addEventListener('touchmove', enterControll)
+      elm.addEventListener('touchcancel', leaveControll)
       elm.addEventListener('touchend', leaveControll)
     })
 
@@ -144,6 +149,7 @@ export const MagicStraight = ({
         elm.removeEventListener('mouseover', enterControll)
         elm.removeEventListener('mouseout', leaveControll)
         elm.removeEventListener('touchmove', enterControll)
+        elm.removeEventListener('touchcancel', leaveControll)
         elm.removeEventListener('touchend', leaveControll)
       })
     }

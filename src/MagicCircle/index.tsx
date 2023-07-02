@@ -42,7 +42,7 @@ export const MagicCircle = ({
     setHasShift(false)
     setHasDelayed(false)
     if (dynamic) return setCount(count - centralAngle)
-  }, [centralAngle, count, dynamic, images.length, select, hasShift])
+  }, [centralAngle, count, dynamic, images.length, select])
 
   // turn right
   const shiftRight = useCallback(() => {
@@ -50,7 +50,7 @@ export const MagicCircle = ({
     setHasShift(true)
     setHasDelayed(false)
     if (dynamic) return setCount(count + centralAngle)
-  }, [centralAngle, count, dynamic, images.length, select, hasShift])
+  }, [centralAngle, count, dynamic, images.length, select])
 
   // Function of the desktop.
   const handleWheel = useCallback(
@@ -63,8 +63,8 @@ export const MagicCircle = ({
   )
 
   // Get a start y and x position in touchStart Y and X.
-  const handleTouchStart = (event: TouchEvent) => {
-    const touch = event.touches[0]
+  const handleTouchStart = (e: TouchEvent) => {
+    const touch = e.touches[0]
     setTouchStartY(touch.clientY)
     setTouchStartX(touch.clientX)
   }
@@ -80,7 +80,7 @@ export const MagicCircle = ({
       setTouchStartX(delta)
       setTouchStartY(delta)
     },
-    [shiftLeft, shiftRight, touchStartY]
+    [hasPick, shiftLeft, shiftRight, touchStartX, touchStartY]
   )
 
   // Main functional, exit function if ref and hasDelayed does not exist.
@@ -135,6 +135,7 @@ export const MagicCircle = ({
       elm.addEventListener('mouseover', enterControll)
       elm.addEventListener('mouseout', leaveControll)
       elm.addEventListener('touchmove', enterControll)
+      elm.addEventListener('touchcancel', leaveControll)
       elm.addEventListener('touchend', leaveControll)
     })
 
@@ -145,6 +146,7 @@ export const MagicCircle = ({
         elm.removeEventListener('mouseover', enterControll)
         elm.removeEventListener('mouseout', leaveControll)
         elm.removeEventListener('touchmove', enterControll)
+        elm.removeEventListener('touchcancel', leaveControll)
         elm.removeEventListener('touchend', leaveControll)
       })
     }
