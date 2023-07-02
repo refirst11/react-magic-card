@@ -40,7 +40,7 @@ export const MagicCircle = ({
   // turn left
   const shiftLeft = useCallback(() => {
     setSelect(select == 0 ? images.length - 1 : select - 1)
-    setHasShift(true)
+    setHasShift(false)
     setHasDelayed(false)
     if (dynamic) return setCount(count + centralAngle)
   }, [centralAngle, count, dynamic, images.length, select])
@@ -48,7 +48,7 @@ export const MagicCircle = ({
   // turn right
   const shiftRight = useCallback(() => {
     setSelect(select == images.length - 1 ? 0 : select + 1)
-    setHasShift(false)
+    setHasShift(true)
     setHasDelayed(false)
     if (dynamic) return setCount(count - centralAngle)
   }, [centralAngle, count, dynamic, images.length, select])
@@ -75,13 +75,12 @@ export const MagicCircle = ({
       const touch = event.touches[0]
       const delta = hasPick ? touch.clientX : touch.clientY
 
-      if (delta < (touchStartY || touchStartX))
+      if (hasPick ? delta < touchStartX : delta < touchStartY)
         clockwise ? shiftLeft() : shiftRight()
-      if (delta > (touchStartY || touchStartX))
+      if (hasPick ? delta > touchStartX : delta > touchStartY)
         clockwise ? shiftRight() : shiftLeft()
 
-      setTouchStartX(delta)
-      setTouchStartY(delta)
+      hasPick ? setTouchStartX(delta) : setTouchStartY(delta)
     },
     [clockwise, hasPick, shiftLeft, shiftRight, touchStartX, touchStartY]
   )
