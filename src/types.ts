@@ -65,12 +65,12 @@ type MagicProperty = {
   start: number
   wheelDelay: number
   className?: string
-  classImage?: string
+  classImages?: string
+  classImageSelect?: string
   classImageUnique?: string
   animate?: AnimationProperty
   initial?: AnimationProperty
   transition?: TransitionProperty
-  selectCursor?: 'pointer' | 'zoom-in' | 'crosshair' | 'help'
   pickProperty?: PickProperty
   pickTransition?: TransitionProperty
 }
@@ -78,6 +78,7 @@ type MagicProperty = {
 export type MagicCircleProps = MagicProperty & {
   radius: number
   dynamic?: boolean
+  clockwise?: boolean
 }
 
 export type MagicStraightProps = MagicProperty & {
