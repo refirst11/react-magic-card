@@ -1,6 +1,6 @@
 {
   "name": "react-magic-card",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "image gallery component with framer motion",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -20,8 +20,10 @@
   },
   "keywords": [
     "react",
-    "illust",
+    "art",
     "photograph",
+    "illust",
+    "gallery",
     "animation"
   ],
   "license": "MIT",
