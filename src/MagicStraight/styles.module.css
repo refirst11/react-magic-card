@@ -3,7 +3,3 @@
   align-items: center;
   justify-content: center;
 }
-
-.outer img {
-  object-fit: 'cover';
-}
