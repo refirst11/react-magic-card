@@ -61,28 +61,28 @@ function MyComponent() {
 }
 ```
 
-| Property         | Meaning                                                                  |
-| ---------------- | ------------------------------------------------------------------------ |
-| images           | array of images and objects containing the src and alt properties.       |
-| width            | width of the single image.                                               |
-| height           | height of the single image.                                              |
-| start            | index number of the starting scale position.                             |
-| controller       | diameter plus the value of the controller is the size of the controller. |
-| className        | className of the component.                                              |
-| classImages      | className of the images.                                                 |
-| classImageSelect | className of the select image.                                           |
-| classImageUnique | className of the index number is assigned to the end.                    |
-| animate          | object in the animation property.                                        |
-| initial          | object in the animation property.                                        |
-| transition       | object in the transition property.                                       |
-| pickTransition   | object in the transition property.                                       |
-| pickProperty     | object in the pick property.                                             |
+| Property         | Meaning                                                                 |
+| ---------------- | ----------------------------------------------------------------------- |
+| images           | array of images and objects containing the src and alt properties       |
+| width            | width of the single image                                               |
+| height           | height of the single image                                              |
+| start            | index number of the starting scale position                             |
+| controller       | diameter plus the value of the controller is the size of the controller |
+| className        | className of the component                                              |
+| classImages      | className of the images                                                 |
+| classImageSelect | className of the select image                                           |
+| classImageUnique | className of the index number is assigned to the end                    |
+| animate          | object in the animation property                                        |
+| initial          | object in the animation property                                        |
+| transition       | object in the transition property                                       |
+| pickTransition   | object in the transition property                                       |
+| pickProperty     | object in the pick property                                             |
 
-| Only MagicCircle | Meaning                                              |
-| ---------------- | ---------------------------------------------------- |
-| radius           | radius of the circle.                                |
-| dynamic          | dynamic or static for rotation the default true.     |
-| clockwise        | direction of rotation when dynamic the default true. |
+| Only MagicCircle | Meaning                                             |
+| ---------------- | --------------------------------------------------- |
+| radius           | radius of the circle                                |
+| dynamic          | dynamic or static for rotation the default true     |
+| clockwise        | direction of rotation when dynamic the default true |
 
 | Only MagicStraight | Meaning                                 |
 | ------------------ | --------------------------------------- |
