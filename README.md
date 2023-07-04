@@ -70,6 +70,8 @@ function MyComponent() {
 | height           | height of the single image                                        |
 | start            | index number of the starting scale position                       |
 | controller       | controller size is add to the size of the component               |
+| offsetIndex      | add an offset to the index of the components and images           |
+| reverseIndex     | reverse index order the default true                              |
 | className        | className of the component                                        |
 | classImages      | className of the images                                           |
 | classImageSelect | className of the select image                                     |
