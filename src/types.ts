@@ -61,8 +61,10 @@ type MagicProperty = {
   images: ImageProperty[]
   height: number
   width: number
-  controller: number
   start: number
+  controller: number
+  offsetIndex?: number
+  reverseIndex?: boolean
   wheelDelay: number
   className?: string
   classImages?: string
