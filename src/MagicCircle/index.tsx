@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import { m, LazyMotion, domAnimation } from 'framer-motion'
 import type { MagicCircleProps } from '../types'
 import styles from './styles.module.css'
@@ -8,19 +14,21 @@ export const MagicCircle = ({
   images,
   height,
   width,
-  radius,
-  controller,
-  start,
   dynamic = true,
   clockwise = true,
-  wheelDelay,
-  animate,
-  initial,
-  transition,
+  radius,
+  start,
+  controller,
+  offsetIndex = 0,
+  reverseIndex = true,
+  wheelDelay = 100,
   className,
   classImages,
   classImageSelect,
   classImageUnique,
+  animate,
+  initial,
+  transition,
   pickProperty,
   pickTransition
 }: MagicCircleProps) => {
@@ -152,15 +160,31 @@ export const MagicCircle = ({
     }
   }, [])
 
-  // Angle between.
+  // angle between.
   const angle = parseFloat((2 * Math.PI).toFixed(15)) / images.length
+
+  // selected image.
+  const frontImage = offsetIndex + images.length + 1
+
+  // keyboard controll.
+  const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = e => {
+    e.key === 'ArrowUp' && shiftLeft()
+    e.key === 'ArrowRight' && shiftLeft()
+    e.key === 'ArrowDown' && shiftRight()
+    e.key === 'ArrowLeft' && shiftRight()
+    e.key === 'Enter' && setHasPick(true)
+    e.key === 'Escape' && setHasPick(false)
+  }
 
   return (
     <LazyMotion features={domAnimation}>
       <m.div
         ref={div1Ref}
+        tabIndex={offsetIndex < 0 ? 0 : offsetIndex - 1}
+        onKeyDown={handleKeyPress}
         className={className + ' ' + styles.outer}
         style={{
+          zIndex: offsetIndex - 1,
           width: radius * 2 + controller + 'px',
           height: radius * 2 + controller + 'px'
         }}
@@ -173,9 +197,12 @@ export const MagicCircle = ({
         >
           {images.map((image, index) => {
             const hasSelect = images[select] == images[index]
+            const zIndex = reverseIndex
+              ? offsetIndex + images.length - 1 - index
+              : offsetIndex + index
             return (
               <m.img
-                key={index}
+                key={zIndex}
                 animate={{
                   rotate: -count,
                   scale: hasSelect ? animate?.selectScale : animate?.scale,
@@ -219,11 +246,12 @@ export const MagicCircle = ({
                   (hasSelect && classImageSelect) +
                   ' ' +
                   classImageUnique +
-                  index
+                  zIndex
                 }
                 src={image.src}
                 alt={image.alt}
                 style={{
+                  zIndex: hasSelect ? frontImage : zIndex,
                   width: width + 'px',
                   height: height + 'px',
                   left:
@@ -262,7 +290,7 @@ export const MagicCircle = ({
         width={width}
         height={height}
         transition={pickTransition}
-        zIndex={images.length + 1}
+        zIndex={frontImage}
       />
     </LazyMotion>
   )

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  KeyboardEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import { m, LazyMotion, domAnimation } from 'framer-motion'
 import type { MagicStraightProps } from '../types'
 import styles from './styles.module.css'
@@ -8,10 +14,15 @@ export const MagicStraight = ({
   images,
   height,
   width,
+  vertical = true,
+  margin = 0,
+  selectOffsetX = 0,
+  selectOffsetY = 0,
   start,
   controller,
-  wheelDelay,
-  vertical,
+  offsetIndex = 0,
+  reverseIndex = true,
+  wheelDelay = 20,
   className,
   classImages,
   classImageSelect,
@@ -19,9 +30,6 @@ export const MagicStraight = ({
   animate,
   initial,
   transition,
-  margin = 0,
-  selectOffsetX = 0,
-  selectOffsetY = 0,
   pickProperty,
   pickTransition
 }: MagicStraightProps) => {
@@ -170,17 +178,33 @@ export const MagicStraight = ({
     }
   }, [])
 
-  // Average calculation.
+  // average calculation.
   let total = 0
   for (let i = 1; i < images.length; i++) total += i
   const average = total / images.length
+
+  // selected image.
+  const frontImage = offsetIndex + images.length + 1
+
+  // keyboard controll.
+  const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = e => {
+    e.key === 'ArrowLeft' && shiftLeft()
+    e.key === 'ArrowUp' && shiftLeft()
+    e.key === 'ArrowRight' && shiftRight()
+    e.key === 'ArrowDown' && shiftRight()
+    e.key === 'Enter' && setHasPick(true)
+    e.key === 'Escape' && setHasPick(false)
+  }
 
   return (
     <LazyMotion features={domAnimation}>
       <div
         ref={div1Ref}
+        tabIndex={offsetIndex < 0 ? 0 : offsetIndex - 1}
+        onKeyDown={handleKeyPress}
         className={className + ' ' + styles.outer}
         style={{
+          zIndex: offsetIndex - 1,
           width: !vertical ? height + controller + 'px' : 'fit-content',
           height: vertical ? width + controller + 'px' : 'fit-content',
           padding: vertical
@@ -191,7 +215,9 @@ export const MagicStraight = ({
       >
         {images.map((image, index) => {
           const hasSelect = images[select] == images[index]
-          const reverseIndex = images.length - 1 - index
+          const zIndex = reverseIndex
+            ? offsetIndex + images.length - 1 - index
+            : offsetIndex + index
           return (
             <m.img
               key={index}
@@ -244,11 +270,7 @@ export const MagicStraight = ({
               alt={image.alt}
               role="button"
               style={{
-                zIndex: hasSelect
-                  ? hasPick
-                    ? 0
-                    : images.length + 1
-                  : reverseIndex,
+                zIndex: hasSelect ? frontImage : zIndex,
                 width: width + 'px',
                 height: height + 'px',
                 margin: vertical ? margin + 'px' + ' 0' : '0 ' + margin + 'px'
@@ -277,7 +299,7 @@ export const MagicStraight = ({
         width={width}
         height={height}
         transition={pickTransition}
-        zIndex={images.length + 1}
+        zIndex={frontImage}
       />
     </LazyMotion>
   )
