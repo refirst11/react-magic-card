@@ -180,7 +180,7 @@ export const MagicCircle = ({
     <LazyMotion features={domAnimation}>
       <m.div
         ref={div1Ref}
-        tabIndex={offsetIndex < 0 ? 0 : offsetIndex - 1}
+        tabIndex={offsetIndex <= 0 ? 0 : offsetIndex - 1}
         onKeyDown={handleKeyPress}
         className={className + ' ' + styles.outer}
         style={{

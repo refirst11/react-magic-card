@@ -200,7 +200,7 @@ export const MagicStraight = ({
     <LazyMotion features={domAnimation}>
       <div
         ref={div1Ref}
-        tabIndex={offsetIndex < 0 ? 0 : offsetIndex - 1}
+        tabIndex={offsetIndex <= 0 ? 0 : offsetIndex - 1}
         onKeyDown={handleKeyPress}
         className={className + ' ' + styles.outer}
         style={{
@@ -220,7 +220,7 @@ export const MagicStraight = ({
             : offsetIndex + index
           return (
             <m.img
-              key={index}
+              key={zIndex}
               animate={{
                 y: hasSelect
                   ? vertical
