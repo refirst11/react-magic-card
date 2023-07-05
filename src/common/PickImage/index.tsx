@@ -38,10 +38,9 @@ const PickImage = ({
       animate={{
         zIndex: zIndex,
         opacity: hasPick ? 1 : 0,
-        pointerEvents: hasPick ? 'auto' : 'none',
-        backdropFilter: backdropFilter,
-        background: background
+        pointerEvents: hasPick ? 'auto' : 'none'
       }}
+      style={{ backdropFilter: backdropFilter, background: background }}
       transition={transition}
     >
       <m.img
