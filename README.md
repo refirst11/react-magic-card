@@ -4,7 +4,7 @@
 [![Minzip Size](https://img.shields.io/bundlephobia/minzip/react-magic-card)](https://bundlephobia.com/package/react-magic-card)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-This is the framer motion component, that supports illust and photograph galleries.
+This is the framer motion components, that support art and photograph gallery.
 
 ## Installation
 
@@ -99,7 +99,7 @@ function MyComponent() {
 | selectOffsetX | X-axis position                         |
 | selectOffsetY | Y-axis position                         |
 
-## Animation Properties
+## Animation Object
 
 | Property      | Meaning                               |
 | ------------- | ------------------------------------- |
@@ -114,15 +114,15 @@ function MyComponent() {
 | selectRotateY | Y-axis rotation of the selected image |
 | selectRotateZ | Z-axis rotation of the selected image |
 
-## Transition Properties
+## Transition Object
 
-It is Inherits framer motion transition properties other than intera.
+It is Inherits framer motion transition object other than intera.
 
-## Pick Properties
+## Pick Object
 
 | Property  | Meaning                                                   |
 | --------- | --------------------------------------------------------- |
-| classPick | class name of the pick image                              |
+| classPick | className of the pick image                               |
 | white     | white or black for background the default true            |
 | alpha     | background transparency of a number between 0 ~ 1         |
 | blur      | blur intensity of a number between 1 ~ 20 a preferred     |
