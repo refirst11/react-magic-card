@@ -1,7 +1,7 @@
 {
   "name": "react-magic-card",
-  "version": "0.1.17",
-  "description": "image gallery component with framer motion",
+  "version": "0.1.18",
+  "description": "image gallery components with framer motion",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "repository": {
