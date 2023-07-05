@@ -18,10 +18,10 @@ export const MagicCircle = ({
   clockwise = true,
   radius,
   start,
+  delay = 100,
   controller,
   offsetIndex = 0,
   reverseIndex = true,
-  wheelDelay = 100,
   className,
   classImages,
   classImageSelect,
@@ -100,7 +100,7 @@ export const MagicCircle = ({
     const elms = [elm1Div, elm2Div]
     const timeId = setTimeout(() => {
       setHasDelayed(true)
-    }, wheelDelay)
+    }, delay)
 
     // Add handle event when component mount and deps update.
     elms.forEach(elm => {
@@ -120,7 +120,7 @@ export const MagicCircle = ({
       })
       clearTimeout(timeId)
     }
-  }, [handleTouchMove, handleWheel, hasDelayed, wheelDelay])
+  }, [handleTouchMove, handleWheel, hasDelayed, delay])
 
   // Functions of the area controller.
   // entry ref area.

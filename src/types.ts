@@ -63,9 +63,9 @@ type MagicProperty = {
   width: number
   start: number
   controller: number
+  delay: number
   offsetIndex?: number
   reverseIndex?: boolean
-  wheelDelay: number
   className?: string
   classImages?: string
   classImageSelect?: string

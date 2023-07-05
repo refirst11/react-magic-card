@@ -20,9 +20,9 @@ export const MagicStraight = ({
   selectOffsetY = 0,
   start,
   controller,
+  delay = 20,
   offsetIndex = 0,
   reverseIndex = true,
-  wheelDelay = 20,
   className,
   classImages,
   classImageSelect,
@@ -117,7 +117,7 @@ export const MagicStraight = ({
     const elms = [elm1Div, elm2Div]
     const timeId = setTimeout(() => {
       setHasDelayed(true)
-    }, wheelDelay)
+    }, delay)
 
     // Add handle event when component mount and deps update.
     elms.forEach(elm => {
@@ -137,7 +137,7 @@ export const MagicStraight = ({
       })
       clearTimeout(timeId)
     }
-  }, [handleTouchMove, handleWheel, hasDelayed, wheelDelay])
+  }, [handleTouchMove, handleWheel, hasDelayed, delay])
 
   // Functions of the area controller.
   // entry ref area.
