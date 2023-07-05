@@ -68,8 +68,9 @@ function MyComponent() {
 | images           | array of images and objects containing the src and alt properties |
 | width            | width of the single image                                         |
 | height           | height of the single image                                        |
-| start            | index number of the starting scale position                       |
+| start            | index number of the array of starting scale position              |
 | controller       | controller size is add to the size of the component               |
+| delay            | delay of the animation firing interval                            |
 | offsetIndex      | add an offset to the index of the components and images           |
 | reverseIndex     | reverse index order the default true                              |
 | className        | className of the component                                        |
@@ -118,7 +119,7 @@ function MyComponent() {
 
 It is Inherits framer motion transition object other than intera.
 
-## Pick Object
+## PickProperty Object
 
 | Property  | Meaning                                                   |
 | --------- | --------------------------------------------------------- |
