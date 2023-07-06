@@ -206,14 +206,11 @@ export const MagicStraight = ({
         style={{
           zIndex: offsetIndex - 1,
           width: !vertical
-            ? images.length * (width + margin * 2) + 'px'
-            : 'fit-content',
+            ? images.length * (width + margin * 2) + controller + 'px'
+            : width + controller,
           height: vertical
-            ? images.length * (height + margin * 2) + 'px'
-            : 'fit-content',
-          padding: vertical
-            ? controller + 'px ' + controller / 2 + 'px'
-            : controller / 2 + 'px ' + controller + 'px',
+            ? images.length * (height + margin * 2) + controller + 'px'
+            : height + controller,
           flexDirection: vertical ? 'column' : 'row'
         }}
       >
