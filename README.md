@@ -73,6 +73,7 @@ function MyComponent() {
 | delay            | delay of the animation firing interval                            |
 | offsetIndex      | add an offset to the index of the components and images           |
 | reverseIndex     | reverse index order the default true                              |
+| loading          | loading option of the eager or lazy the default auto              |
 | className        | className of the component                                        |
 | classImages      | className of the images                                           |
 | classImageSelect | className of the select image                                     |
