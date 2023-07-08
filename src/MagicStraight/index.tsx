@@ -23,6 +23,7 @@ export const MagicStraight = ({
   delay = 20,
   offsetIndex = 0,
   reverseIndex = true,
+  loading,
   className,
   classImages,
   classImageSelect,
@@ -222,6 +223,7 @@ export const MagicStraight = ({
           return (
             <m.img
               key={zIndex}
+              loading={loading}
               animate={{
                 y: hasSelect
                   ? vertical

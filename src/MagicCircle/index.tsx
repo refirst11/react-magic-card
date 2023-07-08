@@ -22,6 +22,7 @@ export const MagicCircle = ({
   controller,
   offsetIndex = 0,
   reverseIndex = true,
+  loading,
   className,
   classImages,
   classImageSelect,
@@ -203,6 +204,7 @@ export const MagicCircle = ({
             return (
               <m.img
                 key={zIndex}
+                loading={loading}
                 animate={{
                   rotate: -count,
                   scale: hasSelect ? animate?.selectScale : animate?.scale,
