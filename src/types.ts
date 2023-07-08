@@ -66,6 +66,7 @@ type MagicProperty = {
   delay: number
   offsetIndex?: number
   reverseIndex?: boolean
+  loading?: 'eager' | 'lazy'
   className?: string
   classImages?: string
   classImageSelect?: string
