@@ -179,121 +179,125 @@ export const MagicCircle = ({
 
   return (
     <LazyMotion features={domAnimation}>
-      <m.div
-        ref={div1Ref}
-        tabIndex={offsetIndex <= 0 ? 0 : offsetIndex - 1}
-        onKeyDown={handleKeyPress}
-        className={className + ' ' + styles.outer}
-        style={{
-          zIndex: offsetIndex - 1,
-          width: radius * 2 + controller + 'px',
-          height: radius * 2 + controller + 'px'
-        }}
-        animate={{ rotate: count }}
-        transition={{ duration: transition?.duration }}
-      >
-        <div
-          className={styles.inner}
-          style={{ width: radius * 2 + 'px', height: radius * 2 + 'px' }}
+      <div className={className}>
+        <m.div
+          ref={div1Ref}
+          tabIndex={offsetIndex <= 0 ? 0 : offsetIndex - 1}
+          onKeyDown={handleKeyPress}
+          className={styles.outer}
+          style={{
+            zIndex: offsetIndex - 1,
+            width: radius * 2 + controller + 'px',
+            height: radius * 2 + controller + 'px'
+          }}
+          animate={{ rotate: count }}
+          transition={{ duration: transition?.duration }}
         >
-          {images.map((image, index) => {
-            const hasSelect = images[select] == images[index]
-            const zIndex = reverseIndex
-              ? offsetIndex + images.length - 1 - index
-              : offsetIndex + index
-            return (
-              <m.img
-                key={zIndex}
-                loading={loading}
-                animate={{
-                  rotate: -count,
-                  scale: hasSelect ? animate?.selectScale : animate?.scale,
-                  rotateY: hasSelect
-                    ? animate?.selectRotateY
-                    : animate?.rotateY,
-                  rotateX: hasSelect
-                    ? animate?.selectRotateX
-                    : animate?.rotateX,
-                  rotateZ: hasSelect
-                    ? animate?.selectRotateZ
-                    : animate?.rotateZ,
-                  opacity: hasSelect
-                    ? hasPick
-                      ? 0
-                      : animate?.selectOpacity
-                    : animate?.opacity
-                }}
-                initial={{
-                  rotate: -count,
-                  scale: hasSelect ? initial?.selectScale : initial?.scale,
-                  rotateY: hasSelect
-                    ? initial?.selectRotateY
-                    : initial?.rotateY,
-                  rotateX: hasSelect
-                    ? initial?.selectRotateX
-                    : initial?.rotateX,
-                  rotateZ: hasSelect
-                    ? initial?.selectRotateZ
-                    : initial?.rotateZ,
-                  opacity: hasSelect ? initial?.selectOpacity : initial?.opacity
-                }}
-                transition={transition}
-                onClick={() => {
-                  setSelect(index)
-                  hasSelect && setHasPick(true)
-                }}
-                className={
-                  classImages +
-                  ' ' +
-                  (hasSelect && classImageSelect) +
-                  ' ' +
-                  classImageUnique +
-                  zIndex
-                }
-                src={image.src}
-                alt={image.alt}
-                style={{
-                  zIndex: hasSelect ? frontImage : zIndex,
-                  width: width + 'px',
-                  height: height + 'px',
-                  left:
-                    radius * Math.cos(index * angle) +
-                    radius -
-                    width / 2 +
-                    'px',
-                  top:
-                    radius * Math.sin(index * angle) +
-                    radius -
-                    height / 2 +
-                    'px'
-                }}
-              />
-            )
-          })}
-        </div>
-      </m.div>
-      <PickImage
-        onClick={() => {
-          leaveControll()
-          setHasPick(false)
-        }}
-        hasPick={hasPick}
-        classPick={pickProperty?.classPick}
-        white={pickProperty?.white}
-        alpha={pickProperty?.alpha}
-        blur={pickProperty?.blur}
-        scale={pickProperty?.scale}
-        offset={pickProperty?.offset}
-        hasShift={hasShift}
-        argRef={div2Ref}
-        argKey={select}
-        src={images[select].src}
-        alt={images[select].alt}
-        width={width}
-        height={height}
-        transition={pickTransition}
-        zIndex={frontImage}
-      />
+          <div
+            className={styles.inner}
+            style={{ width: radius * 2 + 'px', height: radius * 2 + 'px' }}
+          >
+            {images.map((image, index) => {
+              const hasSelect = images[select] == images[index]
+              const zIndex = reverseIndex
+                ? offsetIndex + images.length - 1 - index
+                : offsetIndex + index
+              return (
+                <m.img
+                  key={zIndex}
+                  loading={loading}
+                  animate={{
+                    rotate: -count,
+                    scale: hasSelect ? animate?.selectScale : animate?.scale,
+                    rotateY: hasSelect
+                      ? animate?.selectRotateY
+                      : animate?.rotateY,
+                    rotateX: hasSelect
+                      ? animate?.selectRotateX
+                      : animate?.rotateX,
+                    rotateZ: hasSelect
+                      ? animate?.selectRotateZ
+                      : animate?.rotateZ,
+                    opacity: hasSelect
+                      ? hasPick
+                        ? 0
+                        : animate?.selectOpacity
+                      : animate?.opacity
+                  }}
+                  initial={{
+                    rotate: -count,
+                    scale: hasSelect ? initial?.selectScale : initial?.scale,
+                    rotateY: hasSelect
+                      ? initial?.selectRotateY
+                      : initial?.rotateY,
+                    rotateX: hasSelect
+                      ? initial?.selectRotateX
+                      : initial?.rotateX,
+                    rotateZ: hasSelect
+                      ? initial?.selectRotateZ
+                      : initial?.rotateZ,
+                    opacity: hasSelect
+                      ? initial?.selectOpacity
+                      : initial?.opacity
+                  }}
+                  transition={transition}
+                  onClick={() => {
+                    setSelect(index)
+                    hasSelect && setHasPick(true)
+                  }}
+                  className={
+                    classImages +
+                    ' ' +
+                    (hasSelect && classImageSelect) +
+                    ' ' +
+                    classImageUnique +
+                    zIndex
+                  }
+                  src={image.src}
+                  alt={image.alt}
+                  style={{
+                    zIndex: hasSelect ? frontImage : zIndex,
+                    width: width + 'px',
+                    height: height + 'px',
+                    left:
+                      radius * Math.cos(index * angle) +
+                      radius -
+                      width / 2 +
+                      'px',
+                    top:
+                      radius * Math.sin(index * angle) +
+                      radius -
+                      height / 2 +
+                      'px'
+                  }}
+                />
+              )
+            })}
+          </div>
+        </m.div>
+        <PickImage
+          onClick={() => {
+            leaveControll()
+            setHasPick(false)
+          }}
+          hasPick={hasPick}
+          classPick={pickProperty?.classPick}
+          white={pickProperty?.white}
+          alpha={pickProperty?.alpha}
+          blur={pickProperty?.blur}
+          scale={pickProperty?.scale}
+          offset={pickProperty?.offset}
+          hasShift={hasShift}
+          argRef={div2Ref}
+          argKey={select}
+          src={images[select].src}
+          alt={images[select].alt}
+          width={width}
+          height={height}
+          transition={pickTransition}
+          zIndex={frontImage}
+        />
+      </div>
     </LazyMotion>
   )
 }
