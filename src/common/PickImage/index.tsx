@@ -1,6 +1,6 @@
 import React from 'react'
 import { m } from 'framer-motion'
-import type { ScaleFilterImageProps } from '../../types'
+import type { PickImageProps } from '../../types'
 import styles from './styles.module.css'
 
 const PickImage = ({
@@ -21,7 +21,7 @@ const PickImage = ({
   scale = 2,
   offset = 200,
   transition
-}: ScaleFilterImageProps) => {
+}: PickImageProps) => {
   const backdropFilter = hasPick ? `blur(${blur}px)` : undefined
   const background = hasPick
     ? white

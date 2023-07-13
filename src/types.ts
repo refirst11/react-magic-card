@@ -91,7 +91,7 @@ export type MagicStraightProps = MagicProperty & {
   selectOffsetY?: number
 }
 
-export type ScaleFilterImageProps = {
+export type PickImageProps = {
   onClick: MouseEventHandler<HTMLDivElement>
   classPick?: string
   hasPick: boolean
