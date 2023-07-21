@@ -57,7 +57,7 @@ type PickProperty = {
   offset?: number
 }
 
-type MagicProperty = {
+type CommonProperty = {
   images: ImageProperty[]
   height: number
   width: number
@@ -74,9 +74,21 @@ type MagicProperty = {
   animate?: AnimationProperty
   initial?: AnimationProperty
   transition?: TransitionProperty
-  pickProperty?: PickProperty
-  pickTransition?: TransitionProperty
 }
+
+type OffPick = {
+  pickScale?: true
+  pickProperty: PickProperty
+  pickTransition: TransitionProperty
+}
+
+type OnPick = {
+  pickScale?: false
+  pickProperty?: undefined
+  pickTransition?: undefined
+}
+
+type MagicProperty = CommonProperty & (OffPick | OnPick)
 
 export type MagicCircleProps = MagicProperty & {
   radius: number
