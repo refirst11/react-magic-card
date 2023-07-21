@@ -30,6 +30,7 @@ export const MagicCircle = ({
   animate,
   initial,
   transition,
+  pickScale = true,
   pickProperty,
   pickTransition
 }: MagicCircleProps) => {
@@ -243,7 +244,7 @@ export const MagicCircle = ({
                   transition={transition}
                   onClick={() => {
                     setSelect(index)
-                    hasSelect && setHasPick(true)
+                    hasSelect && pickScale && setHasPick(true)
                   }}
                   className={
                     classImages +

@@ -31,6 +31,7 @@ export const MagicStraight = ({
   animate,
   initial,
   transition,
+  pickScale = true,
   pickProperty,
   pickTransition
 }: MagicStraightProps) => {
@@ -272,7 +273,7 @@ export const MagicStraight = ({
                 transition={transition}
                 onClick={() => {
                   setSelect(index)
-                  hasSelect && setHasPick(true)
+                  hasSelect && pickScale && setHasPick(true)
                 }}
                 className={
                   classImages +
