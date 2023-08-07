@@ -4,7 +4,7 @@
 [![Minzip Size](https://img.shields.io/bundlephobia/minzip/react-magic-card)](https://bundlephobia.com/package/react-magic-card)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-This is the framer motion components, that support art and photograph gallery.
+This is the framer motion components, that support images gallery.
 
 ## Installation
 
@@ -73,7 +73,6 @@ function MyComponent() {
 | delay            | delay of the animation firing interval                            |
 | offsetIndex      | add an offset to the index of the components and images           |
 | reverseIndex     | reverse index order the default true                              |
-| loading          | loading option of the eager or lazy the default auto              |
 | className        | className of the component                                        |
 | classImages      | className of the images                                           |
 | classImageSelect | className of the select image                                     |
@@ -81,8 +80,7 @@ function MyComponent() {
 | animate          | object in the animation property                                  |
 | initial          | object in the animation property                                  |
 | transition       | object in the transition property                                 |
-| pickScale        | whether to turn off pick after selection, default true            |
-| pickTransition   | object in the tansition property                                  |
+| pickTransition   | object in the transition property                                 |
 | pickProperty     | object in the pick property                                       |
 
 ## MagicCircle Properties
@@ -134,4 +132,4 @@ It is Inherits framer motion transition object other than intera.
 
 ## License
 
-MIT License
+The MIT License.
