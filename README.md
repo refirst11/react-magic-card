@@ -81,7 +81,7 @@ function MyComponent() {
 | animate          | object in the animation property                                  |
 | initial          | object in the animation property                                  |
 | transition       | object in the transition property                                 |
-| pickScale        | whether to turn off pickå after selection, default true           |
+| pickScale        | whether to turn off pick after selection, default true            |
 | pickTransition   | object in the tansition property                                  |
 | pickProperty     | object in the pick property                                       |
 
