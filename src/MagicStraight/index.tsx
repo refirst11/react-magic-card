@@ -41,8 +41,8 @@ export const MagicStraight = ({
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
   const [hasPick, setHasPick] = useState(false)
-  const div1Ref = useRef<HTMLDivElement>(null)
-  const div2Ref = useRef<HTMLDivElement>(null)
+  const refOuter = useRef<HTMLDivElement>(null)
+  const refPicker = useRef<HTMLDivElement>(null)
 
   // Functions of the swipe and wheel a shifting.
   // turn left
@@ -114,69 +114,73 @@ export const MagicStraight = ({
 
   // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
-    const elm1Div = div1Ref.current
-    const elm2Div = div2Ref.current
-    const elms = [elm1Div, elm2Div]
+    const outer = refOuter.current as HTMLDivElement
+    const picker = refPicker.current as HTMLDivElement
+
     const timeId = setTimeout(() => {
       setHasDelayed(true)
     }, delay)
 
     // Add handle event when component mount and deps update.
-    elms.forEach(elm => {
-      if (!elm || !hasDelayed) return
-      elm.addEventListener('wheel', handleWheel, { passive: true })
-      elm.addEventListener('touchstart', handleTouchStart, { passive: true })
-      elm.addEventListener('touchmove', handleTouchMove, { passive: true })
-    })
+    outer.addEventListener('wheel', handleWheel, { passive: true })
+    outer.addEventListener('touchstart', handleTouchStart, { passive: true })
+    outer.addEventListener('touchmove', handleTouchMove, { passive: true })
+
+    picker.addEventListener('wheel', handleWheel, { passive: true })
+    picker.addEventListener('touchstart', handleTouchStart, { passive: true })
+    picker.addEventListener('touchmove', handleTouchMove, { passive: true })
 
     // Clean up event and timeId when component is unmount.
     return () => {
-      elms.forEach(elm => {
-        if (!elm) return
-        elm.removeEventListener('wheel', handleWheel)
-        elm.removeEventListener('touchstart', handleTouchStart)
-        elm.removeEventListener('touchmove', handleTouchMove)
-      })
+      outer.removeEventListener('wheel', handleWheel)
+      outer.removeEventListener('touchstart', handleTouchStart)
+      outer.removeEventListener('touchmove', handleTouchMove)
+
+      picker.removeEventListener('wheel', handleWheel)
+      picker.removeEventListener('touchstart', handleTouchStart)
+      picker.removeEventListener('touchmove', handleTouchMove)
+
       clearTimeout(timeId)
     }
   }, [handleTouchMove, handleWheel, hasDelayed, delay])
 
-  // Functions of the area controller.
-  // entry ref area.
-  const enterControll = (e: Event) => {
-    e.preventDefault()
-    document.body.style.overflow = 'hidden'
-  }
-
-  // leave ref area.
-  const leaveControll = () => {
-    document.body.style.overflow = 'auto'
-  }
-
+  // The controll start or end.
   // Added event when component is mounted.
   useEffect(() => {
-    const elm1Div = div1Ref.current
-    const elm2Div = div2Ref.current
-    const elms = [elm1Div, elm2Div]
+    const enterControll = (e: Event) => {
+      e.preventDefault()
+      document.body.style.overflow = 'hidden'
+    }
 
-    // Add event.
-    elms.forEach(elm => {
-      if (!elm) return
-      elm.addEventListener('mouseover', enterControll, { passive: false })
-      elm.addEventListener('mouseout', leaveControll)
-      elm.addEventListener('touchmove', enterControll, { passive: false })
-      elm.addEventListener('touchend', leaveControll)
-    })
+    // leave ref area.
+    const leaveControll = () => {
+      document.body.style.overflow = 'auto'
+    }
+    const outer = refOuter.current as HTMLDivElement
+    const picker = refPicker.current as HTMLDivElement
+
+    // add evenet.
+    outer.addEventListener('mouseover', enterControll, { passive: false })
+    outer.addEventListener('mouseout', leaveControll)
+    outer.addEventListener('touchmove', enterControll, { passive: false })
+    outer.addEventListener('touchend', leaveControll)
+
+    picker.addEventListener('mouseover', enterControll, { passive: false })
+    picker.addEventListener('mouseout', leaveControll)
+    picker.addEventListener('touchmove', enterControll, { passive: false })
+    picker.addEventListener('touchend', leaveControll)
 
     // Clean up event when component is unmount.
     return () => {
-      elms.forEach(elm => {
-        if (!elm) return
-        elm.removeEventListener('mouseover', enterControll)
-        elm.removeEventListener('mouseout', leaveControll)
-        elm.removeEventListener('touchmove', enterControll)
-        elm.removeEventListener('touchend', leaveControll)
-      })
+      outer.removeEventListener('mouseover', enterControll)
+      outer.removeEventListener('mouseout', leaveControll)
+      outer.removeEventListener('touchmove', enterControll)
+      outer.removeEventListener('touchend', leaveControll)
+
+      picker.removeEventListener('mouseover', enterControll)
+      picker.removeEventListener('mopickerseout', leaveControll)
+      picker.removeEventListener('touchmove', enterControll)
+      picker.removeEventListener('touchend', leaveControll)
     }
   }, [])
 
@@ -202,10 +206,10 @@ export const MagicStraight = ({
     <LazyMotion features={domAnimation}>
       <div className={className}>
         <div
-          ref={div1Ref}
+          className={styles.outer}
+          ref={refOuter}
           tabIndex={offsetIndex <= 0 ? 0 : offsetIndex - 1}
           onKeyDown={handleKeyPress}
-          className={styles.outer}
           style={{
             zIndex: offsetIndex - 1,
             width: !vertical
@@ -297,19 +301,18 @@ export const MagicStraight = ({
           })}
         </div>
         <PickImage
+          classPick={pickProperty?.classPick}
+          argRef={refPicker}
           onClick={() => {
-            leaveControll()
             setHasPick(false)
           }}
           hasPick={hasPick}
-          classPick={pickProperty?.classPick}
           white={pickProperty?.white}
           alpha={pickProperty?.alpha}
           blur={pickProperty?.blur}
           scale={pickProperty?.scale}
           offset={pickProperty?.offset}
           hasShift={hasShift}
-          argRef={div2Ref}
           argKey={select}
           src={images[select].src}
           alt={images[select].alt}
