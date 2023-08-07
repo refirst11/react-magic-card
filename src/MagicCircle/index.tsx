@@ -105,6 +105,7 @@ export const MagicCircle = ({
     }, delay)
 
     // Add handle event when component mount and deps update.
+    if (!hasDelayed) return
     outer.addEventListener('wheel', handleWheel, { passive: true })
     outer.addEventListener('touchstart', handleTouchStart, { passive: true })
     outer.addEventListener('touchmove', handleTouchMove, { passive: true })
