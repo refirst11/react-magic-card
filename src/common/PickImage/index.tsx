@@ -44,13 +44,13 @@ const PickImage = ({
       transition={transition}
     >
       <m.img
-        className={classPick}
-        onClick={e => e.stopPropagation()}
         key={argKey}
+        className={classPick}
         src={src}
         alt={alt}
         width={width}
         height={height}
+        draggable={false}
         animate={{
           zIndex: zIndex + 1,
           scale: scale,
