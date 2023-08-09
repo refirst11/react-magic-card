@@ -15,7 +15,7 @@ export const MagicCircle = ({
   height,
   width,
   dynamic = true,
-  clockwise = true,
+  scrollDirection = true,
   radius,
   start,
   delay = 100,
@@ -37,10 +37,14 @@ export const MagicCircle = ({
   const [count, setCount] = useState(0)
   const [touchStartY, setTouchStartY] = useState(0)
   const [touchStartX, setTouchStartX] = useState(0)
+  const [initialX, setInitialX] = useState(0)
+  const [initialY, setInitialY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
   const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
   const [hasPick, setHasPick] = useState(false)
+
   const refOuter = useRef<HTMLDivElement>(null)
   const refPicker = useRef<HTMLDivElement>(null)
 
@@ -64,13 +68,13 @@ export const MagicCircle = ({
   }, [centralAngle, count, dynamic, images.length, select])
 
   // Function of the desktop.
-  const handleWheel = useCallback(
+  const handleScroll = useCallback(
     (e: WheelEvent) => {
       const delta = e.deltaY
-      if (delta < 0) clockwise ? shiftLeft() : shiftRight()
-      if (delta > 0) clockwise ? shiftRight() : shiftLeft()
+      if (delta < 0) scrollDirection ? shiftLeft() : shiftRight()
+      if (delta > 0) scrollDirection ? shiftRight() : shiftLeft()
     },
-    [clockwise, shiftLeft, shiftRight]
+    [scrollDirection, shiftLeft, shiftRight]
   )
 
   // Get a start y and x position in touchStart Y and X.
@@ -83,60 +87,148 @@ export const MagicCircle = ({
   const handleTouchMove = useCallback(
     (event: TouchEvent) => {
       const touch = event.touches[0]
-      const delta = hasPick ? touch.clientX : touch.clientY
+      const outer = refOuter.current as HTMLDivElement
+      const outerHalfWidth = outer.clientWidth / 2
+      const outerHalfHeight = outer.clientHeight / 2
+      const outerRect = outer.getBoundingClientRect()
+      const boundarX = touch.clientX - outerRect.left
+      const boundarY = touch.clientY - outerRect.top
 
-      if (hasPick ? delta < touchStartX : delta < touchStartY)
-        clockwise ? shiftLeft() : shiftRight()
-      if (hasPick ? delta > touchStartX : delta > touchStartY)
-        clockwise ? shiftRight() : shiftLeft()
+      const deltaX = touch.clientX
+      const deltaY = touch.clientY
+      const absDistanceX = Math.abs(deltaX - touchStartX)
+      const absDistanceY = Math.abs(deltaY - touchStartY)
 
-      hasPick ? setTouchStartX(delta) : setTouchStartY(delta)
+      if (absDistanceX > absDistanceY) {
+        if (boundarY > outerHalfHeight) {
+          if (deltaX < touchStartX) shiftLeft()
+          if (deltaX > touchStartX) shiftRight()
+        } else {
+          if (deltaX > touchStartX) shiftLeft()
+          if (deltaX < touchStartX) shiftRight()
+        }
+      } else if (boundarX > outerHalfWidth) {
+        if (deltaY > touchStartY) shiftLeft()
+        if (deltaY < touchStartY) shiftRight()
+      } else {
+        if (deltaY < touchStartY) shiftLeft()
+        if (deltaY > touchStartY) shiftRight()
+      }
+
+      setTouchStartX(deltaX)
+      setTouchStartY(deltaY)
     },
-    [clockwise, hasPick, shiftLeft, shiftRight, touchStartX, touchStartY]
+    [shiftLeft, shiftRight, touchStartX, touchStartY]
   )
+
+  const handleMouseDown = useCallback((e: MouseEvent) => {
+    setIsDragging(true)
+    setInitialX(e.clientX)
+    setInitialY(e.clientY)
+  }, [])
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging) {
+        const outer = refOuter.current as HTMLDivElement
+        const outerHalfWidth = outer.clientWidth / 2
+        const outerHalfHeight = outer.clientHeight / 2
+        const outerRect = outer.getBoundingClientRect()
+        const boundarX = e.clientX - outerRect.left
+        const boundarY = e.clientY - outerRect.top
+
+        const deltaX = e.clientX - initialX
+        const deltaY = e.clientY - initialY
+        const absDistanceX = Math.abs(deltaX)
+        const absDistanceY = Math.abs(deltaY)
+
+        if (absDistanceX > absDistanceY) {
+          if (boundarY > outerHalfHeight) {
+            if (deltaX < 0) shiftLeft()
+            if (deltaX > 0) shiftRight()
+          } else {
+            if (deltaX > 0) shiftLeft()
+            if (deltaX < 0) shiftRight()
+          }
+        } else if (boundarX > outerHalfWidth) {
+          if (deltaY > 0) shiftLeft()
+          if (deltaY < 0) shiftRight()
+        } else {
+          if (deltaY < 0) shiftLeft()
+          if (deltaY > 0) shiftRight()
+        }
+
+        setInitialX(e.clientX)
+        setInitialY(e.clientY)
+      }
+    },
+    [initialX, initialY, isDragging, shiftLeft, shiftRight]
+  )
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+  }, [])
 
   // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
     const outer = refOuter.current as HTMLDivElement
     const picker = refPicker.current as HTMLDivElement
-    ;``
+
     const timeId = setTimeout(() => {
       setHasDelayed(true)
     }, delay)
 
     // Add handle event when component mount and deps update.
+    document.addEventListener('mouseup', handleMouseUp)
     if (!hasDelayed) return
-    outer.addEventListener('wheel', handleWheel, { passive: true })
-    outer.addEventListener('touchstart', handleTouchStart, { passive: true })
-    outer.addEventListener('touchmove', handleTouchMove, { passive: true })
+    picker.addEventListener('mousedown', handleMouseDown)
+    outer.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
 
-    picker.addEventListener('wheel', handleWheel, { passive: true })
-    picker.addEventListener('touchstart', handleTouchStart, { passive: true })
-    picker.addEventListener('touchmove', handleTouchMove, { passive: true })
+    outer.addEventListener('wheel', handleScroll)
+    outer.addEventListener('touchstart', handleTouchStart)
+    outer.addEventListener('touchmove', handleTouchMove)
+
+    picker.addEventListener('wheel', handleScroll)
+    picker.addEventListener('touchstart', handleTouchStart)
+    picker.addEventListener('touchmove', handleTouchMove)
 
     // Clean up event and timeId when component is unmount.
     return () => {
-      outer.removeEventListener('wheel', handleWheel)
+      clearTimeout(timeId)
+
+      document.removeEventListener('mouseup', handleMouseUp)
+      picker.removeEventListener('mousedown', handleMouseDown)
+      outer.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('mousemove', handleMouseMove)
+
+      outer.removeEventListener('wheel', handleScroll)
       outer.removeEventListener('touchstart', handleTouchStart)
       outer.removeEventListener('touchmove', handleTouchMove)
 
-      picker.removeEventListener('wheel', handleWheel)
+      picker.removeEventListener('wheel', handleScroll)
       picker.removeEventListener('touchstart', handleTouchStart)
       picker.removeEventListener('touchmove', handleTouchMove)
-
-      clearTimeout(timeId)
     }
-  }, [handleTouchMove, handleWheel, hasDelayed, delay])
+  }, [
+    delay,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleScroll,
+    hasDelayed
+  ])
 
   // The controll start or end.
   // Added event when component is mounted.
   useEffect(() => {
-    const enterControll = (e: Event) => {
+    const enterControl = (e: Event) => {
       e.preventDefault()
       document.body.style.overflow = 'hidden'
     }
 
-    const leaveControll = () => {
+    const leaveControl = () => {
       document.body.style.overflow = 'auto'
     }
 
@@ -144,27 +236,30 @@ export const MagicCircle = ({
     const picker = refPicker.current as HTMLDivElement
 
     // Add event.
-    outer.addEventListener('mouseover', enterControll, { passive: false })
-    outer.addEventListener('mouseout', leaveControll)
-    outer.addEventListener('touchmove', enterControll, { passive: false })
-    outer.addEventListener('touchend', leaveControll)
+    outer.addEventListener('mouseover', enterControl, { passive: false })
+    outer.addEventListener('mouseout', leaveControl)
+    outer.addEventListener('touchmove', enterControl, { passive: false })
+    outer.addEventListener('touchend', leaveControl)
 
-    picker.addEventListener('mouseover', enterControll, { passive: false })
-    picker.addEventListener('mouseout', leaveControll)
-    picker.addEventListener('touchmove', enterControll, { passive: false })
-    picker.addEventListener('touchend', leaveControll)
+    picker.addEventListener('mouseover', enterControl, { passive: false })
+    picker.addEventListener('mouseout', leaveControl)
+    picker.addEventListener('touchmove', enterControl, { passive: false })
+    picker.addEventListener('touchend', leaveControl)
 
     // Clean up event when component is unmount.
     return () => {
-      outer.removeEventListener('mouseover', enterControll)
-      outer.removeEventListener('mouseout', leaveControll)
-      outer.removeEventListener('touchmove', enterControll)
-      outer.removeEventListener('touchend', leaveControll)
+      outer.removeEventListener('mouseover', enterControl)
+      outer.removeEventListener('mouseout', leaveControl)
+      outer.removeEventListener('touchmove', enterControl)
+      outer.removeEventListener('touchend', leaveControl)
 
-      picker.removeEventListener('mouseover', enterControll)
-      picker.removeEventListener('mouseout', leaveControll)
-      picker.removeEventListener('touchmove', enterControll)
-      picker.removeEventListener('touchend', leaveControll)
+      picker.removeEventListener('mouseover', enterControl)
+      picker.removeEventListener('mouseout', leaveControl)
+      picker.removeEventListener('touchmove', enterControl)
+      picker.removeEventListener('touchend', leaveControl)
+
+      // page unmount with leave control.
+      leaveControl()
     }
   }, [])
 
@@ -212,6 +307,18 @@ export const MagicCircle = ({
               return (
                 <m.img
                   key={zIndex}
+                  className={
+                    classImages +
+                    ' ' +
+                    (hasSelect && classImageSelect) +
+                    ' ' +
+                    classImageUnique +
+                    zIndex
+                  }
+                  src={image.src}
+                  alt={image.alt}
+                  role="button"
+                  draggable={false}
                   loading={loading}
                   animate={{
                     rotate: -count,
@@ -252,16 +359,6 @@ export const MagicCircle = ({
                     setSelect(index)
                     hasSelect && pickScale && setHasPick(true)
                   }}
-                  className={
-                    classImages +
-                    ' ' +
-                    (hasSelect && classImageSelect) +
-                    ' ' +
-                    classImageUnique +
-                    zIndex
-                  }
-                  src={image.src}
-                  alt={image.alt}
                   style={{
                     zIndex: hasSelect ? frontImage : zIndex,
                     width: width + 'px',

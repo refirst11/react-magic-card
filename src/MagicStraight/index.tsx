@@ -37,6 +37,9 @@ export const MagicStraight = ({
 }: MagicStraightProps) => {
   const [touchStartY, setTouchStartY] = useState(0)
   const [touchStartX, setTouchStartX] = useState(0)
+  const [initialX, setInitialX] = useState(0)
+  const [initialY, setInitialY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
   const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
@@ -60,7 +63,7 @@ export const MagicStraight = ({
   }, [images.length, select])
 
   // Wheel function of the desktop.
-  const handleWheel = useCallback(
+  const handleScroll = useCallback(
     (e: WheelEvent) => {
       const delta = e.deltaY
       if (delta < 0) shiftLeft()
@@ -112,6 +115,31 @@ export const MagicStraight = ({
     [hasPick, shiftLeft, shiftRight, touchStartX, touchStartY, vertical]
   )
 
+  const handleMouseDown = useCallback((e: MouseEvent) => {
+    setIsDragging(true)
+    setInitialX(e.clientX)
+    setInitialY(e.clientY)
+  }, [])
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging) {
+        const deltaX = e.clientX - initialX
+        const deltaY = e.clientY - initialY
+
+        if (!vertical ? deltaX < 0 : deltaY < 0) shiftLeft()
+        if (!vertical ? deltaX > 0 : deltaY > 0) shiftRight()
+
+        !vertical ? setInitialX(e.clientX) : setInitialY(e.clientY)
+      }
+    },
+    [initialX, initialY, isDragging, shiftLeft, shiftRight, vertical]
+  )
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
   // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
     const outer = refOuter.current as HTMLDivElement
@@ -122,66 +150,86 @@ export const MagicStraight = ({
     }, delay)
 
     // Add handle event when component mount and deps update.
+    document.addEventListener('mouseup', handleMouseUp)
     if (!hasDelayed) return
-    outer.addEventListener('wheel', handleWheel, { passive: true })
-    outer.addEventListener('touchstart', handleTouchStart, { passive: true })
-    outer.addEventListener('touchmove', handleTouchMove, { passive: true })
+    picker.addEventListener('mousedown', handleMouseDown)
+    outer.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
 
-    picker.addEventListener('wheel', handleWheel, { passive: true })
-    picker.addEventListener('touchstart', handleTouchStart, { passive: true })
-    picker.addEventListener('touchmove', handleTouchMove, { passive: true })
+    outer.addEventListener('wheel', handleScroll)
+    outer.addEventListener('touchstart', handleTouchStart)
+    outer.addEventListener('touchmove', handleTouchMove)
+
+    picker.addEventListener('wheel', handleScroll)
+    picker.addEventListener('touchstart', handleTouchStart)
+    picker.addEventListener('touchmove', handleTouchMove)
 
     // Clean up event and timeId when component is unmount.
     return () => {
-      outer.removeEventListener('wheel', handleWheel)
+      clearTimeout(timeId)
+
+      outer.removeEventListener('wheel', handleScroll)
       outer.removeEventListener('touchstart', handleTouchStart)
       outer.removeEventListener('touchmove', handleTouchMove)
 
-      picker.removeEventListener('wheel', handleWheel)
+      document.removeEventListener('mouseup', handleMouseUp)
+      picker.removeEventListener('mousedown', handleMouseDown)
+      outer.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('mousemove', handleMouseMove)
+
       picker.removeEventListener('touchstart', handleTouchStart)
       picker.removeEventListener('touchmove', handleTouchMove)
-
-      clearTimeout(timeId)
     }
-  }, [handleTouchMove, handleWheel, hasDelayed, delay])
+  }, [
+    delay,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleScroll,
+    hasDelayed
+  ])
 
   // The controll start or end.
   // Added event when component is mounted.
   useEffect(() => {
-    const enterControll = (e: Event) => {
+    const enterControl = (e: Event) => {
       e.preventDefault()
       document.body.style.overflow = 'hidden'
     }
 
-    // leave ref area.
-    const leaveControll = () => {
+    const leaveControl = () => {
       document.body.style.overflow = 'auto'
     }
+
     const outer = refOuter.current as HTMLDivElement
     const picker = refPicker.current as HTMLDivElement
 
-    // add evenet.
-    outer.addEventListener('mouseover', enterControll, { passive: false })
-    outer.addEventListener('mouseout', leaveControll)
-    outer.addEventListener('touchmove', enterControll, { passive: false })
-    outer.addEventListener('touchend', leaveControll)
+    // Add event.
+    outer.addEventListener('mouseover', enterControl, { passive: false })
+    outer.addEventListener('mouseout', leaveControl)
+    outer.addEventListener('touchmove', enterControl, { passive: false })
+    outer.addEventListener('touchend', leaveControl)
 
-    picker.addEventListener('mouseover', enterControll, { passive: false })
-    picker.addEventListener('mouseout', leaveControll)
-    picker.addEventListener('touchmove', enterControll, { passive: false })
-    picker.addEventListener('touchend', leaveControll)
+    picker.addEventListener('mouseover', enterControl, { passive: false })
+    picker.addEventListener('mouseout', leaveControl)
+    picker.addEventListener('touchmove', enterControl, { passive: false })
+    picker.addEventListener('touchend', leaveControl)
 
     // Clean up event when component is unmount.
     return () => {
-      outer.removeEventListener('mouseover', enterControll)
-      outer.removeEventListener('mouseout', leaveControll)
-      outer.removeEventListener('touchmove', enterControll)
-      outer.removeEventListener('touchend', leaveControll)
+      outer.removeEventListener('mouseover', enterControl)
+      outer.removeEventListener('mouseout', leaveControl)
+      outer.removeEventListener('touchmove', enterControl)
+      outer.removeEventListener('touchend', leaveControl)
 
-      picker.removeEventListener('mouseover', enterControll)
-      picker.removeEventListener('mopickerseout', leaveControll)
-      picker.removeEventListener('touchmove', enterControll)
-      picker.removeEventListener('touchend', leaveControll)
+      picker.removeEventListener('mouseover', enterControl)
+      picker.removeEventListener('mouseout', leaveControl)
+      picker.removeEventListener('touchmove', enterControl)
+      picker.removeEventListener('touchend', leaveControl)
+
+      // page unmount with leave control.
+      leaveControl()
     }
   }, [])
 
@@ -230,6 +278,18 @@ export const MagicStraight = ({
             return (
               <m.img
                 key={zIndex}
+                className={
+                  classImages +
+                  ' ' +
+                  (hasSelect && classImageSelect) +
+                  ' ' +
+                  classImageUnique +
+                  index
+                }
+                src={image.src}
+                alt={image.alt}
+                role="button"
+                draggable={false}
                 loading={loading}
                 animate={{
                   y: hasSelect
@@ -280,17 +340,6 @@ export const MagicStraight = ({
                   setSelect(index)
                   hasSelect && pickScale && setHasPick(true)
                 }}
-                className={
-                  classImages +
-                  ' ' +
-                  (hasSelect && classImageSelect) +
-                  ' ' +
-                  classImageUnique +
-                  index
-                }
-                src={image.src}
-                alt={image.alt}
-                role="button"
                 style={{
                   zIndex: hasSelect ? frontImage : zIndex,
                   width: width + 'px',
