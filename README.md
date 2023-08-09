@@ -41,21 +41,7 @@ function MyComponent() {
       radius={100}
       controller={200}
       start={1}
-      dynamic={true}
-      wheelDelay={100}
-      animate={{
-        scale: 0.8,
-        rotateX: 70,
-        rotateY: 40,
-        rotateZ: -50,
-        selectScale: 1.6,
-        selectRotateX: 40,
-        selectRotateY: 40,
-        selectRotateZ: -10
-      }}
-      transition={{ duration: 0.2 }}
-      pickTransition={{ duration: 0.2 }}
-      pickProperty={{ white: true }}
+      delay={100}
     />
   )
 }
@@ -85,11 +71,10 @@ function MyComponent() {
 
 ## MagicCircle Properties
 
-| Property  | Meaning                                             |
-| --------- | --------------------------------------------------- |
-| radius    | radius of the circle                                |
-| dynamic   | dynamic or static for rotation the default true     |
-| clockwise | direction of rotation when dynamic the default true |
+| Property | Meaning                                         |
+| -------- | ----------------------------------------------- |
+| radius   | radius of the circle                            |
+| dynamic  | dynamic or static for rotation the default true |
 
 ## MagicStraight Properties
 
