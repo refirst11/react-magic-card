@@ -93,7 +93,7 @@ type MagicProperty = CommonProperty & (OffPick | OnPick)
 export type MagicCircleProps = MagicProperty & {
   radius: number
   dynamic?: boolean
-  clockwise?: boolean
+  scrollDirection?: boolean
 }
 
 export type MagicStraightProps = MagicProperty & {
