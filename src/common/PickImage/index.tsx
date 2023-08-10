@@ -45,7 +45,7 @@ const PickImage = ({
     >
       <m.img
         key={argKey}
-        className={classPick}
+        className={classPick + ' ' + styles.no_select}
         src={src}
         alt={alt}
         width={width}
