@@ -241,7 +241,7 @@ export const MagicStraight = ({
   // selected image.
   const frontImage = offsetIndex + images.length + 1
 
-  // keyboard controll.
+  // keyboard control.
   const handleKeyPress: KeyboardEventHandler<HTMLDivElement> = e => {
     e.key === 'ArrowLeft' && shiftLeft()
     e.key === 'ArrowUp' && shiftLeft()
@@ -338,7 +338,7 @@ export const MagicStraight = ({
                 transition={transition}
                 onClick={() => {
                   setSelect(index)
-                  hasSelect && pickScale && setHasPick(true)
+                  hasSelect && pickScale && !isDragging && setHasPick(true)
                 }}
                 style={{
                   zIndex: hasSelect ? frontImage : zIndex,
