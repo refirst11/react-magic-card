@@ -20,26 +20,18 @@ import { MagicCircle } from 'react-magic-card'
 function MyComponent() {
   const images = [
     {
-      src: '/1.jpeg',
-      alt: '1image'
-    },
-    {
-      src: '/2.jpeg',
-      alt: '2image'
-    },
-    {
-      src: '/3.jpeg',
-      alt: '3image'
+      src: '/src.jpeg',
+      alt: 'alt'
     }
   ]
 
   return (
     <MagicCircle
       images={images}
-      width={120}
-      height={120}
+      width={100}
+      height={100}
       radius={100}
-      controller={200}
+      controller={100}
       start={1}
       delay={100}
     />
@@ -49,32 +41,32 @@ function MyComponent() {
 
 ## Common Properties
 
-| Property         | Meaning                                                           |
-| ---------------- | ----------------------------------------------------------------- |
-| images           | array of images and objects containing the src and alt properties |
-| width            | width of the single image                                         |
-| height           | height of the single image                                        |
-| start            | index number of the array of starting scale position              |
-| controller       | controller size is add to the size of the component               |
-| delay            | delay of the animation firing interval                            |
-| offsetIndex      | add an offset to the index of the components and images           |
-| reverseIndex     | reverse index order the default true                              |
-| className        | className of the component                                        |
-| classImages      | className of the images                                           |
-| classImageSelect | className of the select image                                     |
-| classImageUnique | className of the index number is assigned to the end              |
-| animate          | object in the animation property                                  |
-| initial          | object in the animation property                                  |
-| transition       | object in the transition property                                 |
-| pickTransition   | object in the transition property                                 |
-| pickProperty     | object in the pick property                                       |
+| Property              | Meaning                                                                                                                       |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| images (required)     | array of images and objects containing the src and alt properties                                                             |
+| width (required)      | width of the single image                                                                                                     |
+| height (required)     | height of the single image                                                                                                    |
+| start (required)      | index number of the array of starting scale position,An error is issued if a number outside the range of the array is entered |
+| controller (required) | controller size is add to the size of the component                                                                           |
+| delay                 | delay of the animation firing interval                                                                                        |
+| offsetIndex           | add an offset to the index of the components and images                                                                       |
+| reverseIndex          | reverse index order the default true                                                                                          |
+| className             | className of the component                                                                                                    |
+| classImages           | className of the images                                                                                                       |
+| classImageSelect      | className of the select image                                                                                                 |
+| classImageUnique      | className of the index number is assigned to the end                                                                          |
+| animate               | object in the animation property                                                                                              |
+| initial               | object in the animation property                                                                                              |
+| transition            | object in the transition property                                                                                             |
+| pickTransition        | object in the transition property                                                                                             |
+| pickProperty          | object in the pick property                                                                                                   |
 
 ## MagicCircle Properties
 
-| Property | Meaning                                         |
-| -------- | ----------------------------------------------- |
-| radius   | radius of the circle                            |
-| dynamic  | dynamic or static for rotation the default true |
+| Property          | Meaning                                         |
+| ----------------- | ----------------------------------------------- |
+| radius (required) | radius of the circle                            |
+| dynamic           | dynamic or static for rotation the default true |
 
 ## MagicStraight Properties
 
