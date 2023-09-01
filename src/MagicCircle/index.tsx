@@ -355,7 +355,7 @@ export const MagicCircle = ({
                       : initial?.opacity
                   }}
                   transition={transition}
-                  onClick={() => {
+                  onMouseDown={() => {
                     setSelect(index)
                     hasSelect && pickScale && !isDragging && setHasPick(true)
                   }}
