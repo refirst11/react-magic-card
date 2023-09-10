@@ -304,7 +304,7 @@ export const MagicCircle = ({
             height: radius * 2 + controller + 'px'
           }}
           animate={{ rotate: count }}
-          transition={{ duration: transition?.duration }}
+          transition={transition}
         >
           <div
             className={styles.inner}
@@ -367,6 +367,7 @@ export const MagicCircle = ({
                   }}
                   transition={transition}
                   onMouseDown={() => setSelect(index)}
+                  onPointerDown={() => setSelect(index)}
                   onClick={() =>
                     hasSelect && pickScale && !hasMove && setHasPick(true)
                   }
