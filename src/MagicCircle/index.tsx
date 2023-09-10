@@ -12,12 +12,12 @@ import PickImage from '../common/PickImage'
 
 export const MagicCircle = ({
   images,
+  start = images.length,
   height,
   width,
   dynamic = true,
   scrollDirection = true,
   radius,
-  start,
   delay = 100,
   controller,
   offsetIndex = 0,
@@ -40,6 +40,7 @@ export const MagicCircle = ({
   const [initialX, setInitialX] = useState(0)
   const [initialY, setInitialY] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [hasMove, setHasMove] = useState(false)
   const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
@@ -121,11 +122,15 @@ export const MagicCircle = ({
     [shiftLeft, shiftRight, touchStartX, touchStartY]
   )
 
-  const handleMouseDown = useCallback((e: MouseEvent) => {
-    setIsDragging(true)
-    setInitialX(e.clientX)
-    setInitialY(e.clientY)
-  }, [])
+  const handleMouseDown = useCallback(
+    (e: MouseEvent) => {
+      if (hasPick) return
+      setIsDragging(true)
+      setInitialX(e.clientX)
+      setInitialY(e.clientY)
+    },
+    [hasPick]
+  )
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -160,6 +165,7 @@ export const MagicCircle = ({
 
         setInitialX(e.clientX)
         setInitialY(e.clientY)
+        setHasMove(true)
       }
     },
     [initialX, initialY, isDragging, shiftLeft, shiftRight]
@@ -167,6 +173,7 @@ export const MagicCircle = ({
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
+    setHasMove(false)
   }, [])
 
   // Main functional, exit function if ref and hasDelayed does not exist.
@@ -355,10 +362,10 @@ export const MagicCircle = ({
                       : initial?.opacity
                   }}
                   transition={transition}
-                  onMouseDown={() => {
-                    setSelect(index)
-                    hasSelect && pickScale && !isDragging && setHasPick(true)
-                  }}
+                  onMouseDown={() => setSelect(index)}
+                  onClick={() =>
+                    hasSelect && pickScale && !hasMove && setHasPick(true)
+                  }
                   style={{
                     zIndex: hasSelect ? frontImage : zIndex,
                     width: width + 'px',
