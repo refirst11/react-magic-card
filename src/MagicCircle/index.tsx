@@ -12,7 +12,7 @@ import PickImage from '../common/PickImage'
 
 export const MagicCircle = ({
   images,
-  start = images.length,
+  start,
   height,
   width,
   dynamic = true,
@@ -34,6 +34,10 @@ export const MagicCircle = ({
   pickProperty,
   pickTransition
 }: MagicCircleProps) => {
+  // array out of range adjusting.
+  start = Math.max(0, start)
+  start = Math.min(start, images.length - 1)
+
   const [count, setCount] = useState(0)
   const [touchStartY, setTouchStartY] = useState(0)
   const [touchStartX, setTouchStartX] = useState(0)

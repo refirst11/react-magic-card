@@ -12,13 +12,13 @@ import PickImage from '../common/PickImage'
 
 export const MagicStraight = ({
   images,
+  start,
   height,
   width,
   vertical = true,
   margin = 0,
   selectOffsetX = 0,
   selectOffsetY = 0,
-  start,
   controller,
   delay = 20,
   offsetIndex = 0,
@@ -35,6 +35,10 @@ export const MagicStraight = ({
   pickProperty,
   pickTransition
 }: MagicStraightProps) => {
+  // array out of range adjusting.
+  start = Math.max(0, start)
+  start = Math.min(start, images.length - 1)
+
   const [touchStartY, setTouchStartY] = useState(0)
   const [touchStartX, setTouchStartX] = useState(0)
   const [initialX, setInitialX] = useState(0)

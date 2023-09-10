@@ -59,9 +59,9 @@ type PickProperty = {
 
 type CommonProperty = {
   images: ImageProperty[]
+  start: number
   height: number
   width: number
-  start: number
   controller: number
   delay: number
   offsetIndex?: number
