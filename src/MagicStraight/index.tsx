@@ -23,7 +23,8 @@ export const MagicStraight = ({
   delay = 20,
   offsetIndex = 0,
   reverseIndex = true,
-  loading,
+  fadeRange = 4,
+  transTime = 0.2,
   className,
   classImages,
   classImageSelect,
@@ -255,6 +256,12 @@ export const MagicStraight = ({
     e.key === 'Escape' && setHasPick(false)
   }
 
+  // has after Lazy loading fade transition.
+  const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
+
   return (
     <LazyMotion features={domAnimation}>
       <div className={className}>
@@ -292,9 +299,9 @@ export const MagicStraight = ({
                 }
                 src={image.src}
                 alt={image.alt}
-                role="button"
+                role={'button'}
                 draggable={false}
-                loading={loading}
+                loading={'lazy'}
                 animate={{
                   y: hasSelect
                     ? vertical
@@ -348,7 +355,11 @@ export const MagicStraight = ({
                   zIndex: hasSelect ? frontImage : zIndex,
                   width: width + 'px',
                   height: height + 'px',
-                  margin: vertical ? margin + 'px' + ' 0' : '0 ' + margin + 'px'
+                  margin: vertical
+                    ? margin + 'px' + ' 0'
+                    : '0 ' + margin + 'px',
+                  filter: isLoaded ? 'blur(0)' : `blur(${fadeRange}px)`,
+                  transition: `filter ${transTime}s ease-in-out`
                 }}
               />
             )

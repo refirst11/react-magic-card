@@ -66,7 +66,8 @@ type CommonProperty = {
   delay: number
   offsetIndex?: number
   reverseIndex?: boolean
-  loading?: 'eager' | 'lazy'
+  fadeRange: number
+  transTime: number
   className?: string
   classImages?: string
   classImageSelect?: string

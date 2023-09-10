@@ -22,7 +22,8 @@ export const MagicCircle = ({
   controller,
   offsetIndex = 0,
   reverseIndex = true,
-  loading,
+  fadeRange = 4,
+  transTime = 0.2,
   className,
   classImages,
   classImageSelect,
@@ -290,6 +291,12 @@ export const MagicCircle = ({
     e.key === 'Escape' && setHasPick(false)
   }
 
+  // has after Lazy loading fade transition.
+  const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
+
   return (
     <LazyMotion features={domAnimation}>
       <div className={className}>
@@ -326,11 +333,11 @@ export const MagicCircle = ({
                     classImageUnique +
                     zIndex
                   }
+                  role={'button'}
                   src={image.src}
                   alt={image.alt}
-                  role="button"
                   draggable={false}
-                  loading={loading}
+                  loading={'lazy'}
                   animate={{
                     rotate: -count,
                     scale: hasSelect ? animate?.selectScale : animate?.scale,
@@ -384,7 +391,9 @@ export const MagicCircle = ({
                       radius * Math.sin(index * angle) +
                       radius -
                       height / 2 +
-                      'px'
+                      'px',
+                    filter: isLoaded ? 'blur(0)' : `blur(${fadeRange}px)`,
+                    transition: `filter ${transTime}s ease-in-out`
                   }}
                 />
               )

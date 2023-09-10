@@ -50,7 +50,9 @@ function MyComponent() {
 | controller (required) | controller size is add to the size of the component               |
 | delay                 | delay of the animation firing interval                            |
 | offsetIndex           | add an offset to the index of the components and images           |
-| reverseIndex          | reverse index order the default true                              |
+| reverseIndex          | order the change the overlap of zindex default true               |
+| fadeRange             | range of fade animation after page loaded                         |
+| transTime             | transition time of fade animation after page loaded               |
 | className             | className of the component                                        |
 | classImages           | className of the images                                           |
 | classImageSelect      | className of the select image                                     |
