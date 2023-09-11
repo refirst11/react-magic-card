@@ -13,6 +13,7 @@ import PickImage from '../common/PickImage'
 export const MagicCircle = ({
   images,
   start,
+
   height,
   width,
   dynamic = true,
@@ -22,8 +23,9 @@ export const MagicCircle = ({
   controller,
   offsetIndex = 0,
   reverseIndex = true,
-  fadeRange = 4,
-  transTime = 0.2,
+  loading,
+  initialFadeRange = 4,
+  initialTransTime = 0.2,
   className,
   classImages,
   classImageSelect,
@@ -337,7 +339,7 @@ export const MagicCircle = ({
                   src={image.src}
                   alt={image.alt}
                   draggable={false}
-                  loading={'lazy'}
+                  loading={loading}
                   animate={{
                     rotate: -count,
                     scale: hasSelect ? animate?.selectScale : animate?.scale,
@@ -373,7 +375,6 @@ export const MagicCircle = ({
                       : initial?.opacity
                   }}
                   transition={transition}
-                  onMouseDown={() => setSelect(index)}
                   onPointerDown={() => setSelect(index)}
                   onClick={() =>
                     hasSelect && pickScale && !hasMove && setHasPick(true)
@@ -392,8 +393,10 @@ export const MagicCircle = ({
                       radius -
                       height / 2 +
                       'px',
-                    filter: isLoaded ? 'blur(0)' : `blur(${fadeRange}px)`,
-                    transition: `filter ${transTime}s ease-in-out`
+                    filter: isLoaded
+                      ? 'blur(0)'
+                      : `blur(${initialFadeRange}px)`,
+                    transition: `filter ${initialTransTime}s ease-in-out`
                   }}
                 />
               )

@@ -23,8 +23,9 @@ export const MagicStraight = ({
   delay = 20,
   offsetIndex = 0,
   reverseIndex = true,
-  fadeRange = 4,
-  transTime = 0.2,
+  loading,
+  initialFadeRange = 4,
+  initialTransTime = 0.2,
   className,
   classImages,
   classImageSelect,
@@ -45,6 +46,7 @@ export const MagicStraight = ({
   const [initialX, setInitialX] = useState(0)
   const [initialY, setInitialY] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [hasMove, setHasMove] = useState(false)
   const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
@@ -136,6 +138,7 @@ export const MagicStraight = ({
         if (!vertical ? deltaX > 0 : deltaY > 0) shiftRight()
 
         !vertical ? setInitialX(e.clientX) : setInitialY(e.clientY)
+        setHasMove(true)
       }
     },
     [initialX, initialY, isDragging, shiftLeft, shiftRight, vertical]
@@ -143,6 +146,7 @@ export const MagicStraight = ({
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
+    setHasMove(false)
   }, [])
 
   // Main functional, exit function if ref and hasDelayed does not exist.
@@ -301,7 +305,7 @@ export const MagicStraight = ({
                 alt={image.alt}
                 role={'button'}
                 draggable={false}
-                loading={'lazy'}
+                loading={loading}
                 animate={{
                   y: hasSelect
                     ? vertical
@@ -349,7 +353,7 @@ export const MagicStraight = ({
                 transition={transition}
                 onClick={() => {
                   setSelect(index)
-                  hasSelect && pickScale && !isDragging && setHasPick(true)
+                  hasSelect && pickScale && !hasMove && setHasPick(true)
                 }}
                 style={{
                   zIndex: hasSelect ? frontImage : zIndex,
@@ -358,8 +362,8 @@ export const MagicStraight = ({
                   margin: vertical
                     ? margin + 'px' + ' 0'
                     : '0 ' + margin + 'px',
-                  filter: isLoaded ? 'blur(0)' : `blur(${fadeRange}px)`,
-                  transition: `filter ${transTime}s ease-in-out`
+                  filter: isLoaded ? 'blur(0)' : `blur(${initialFadeRange}px)`,
+                  transition: `filter ${initialTransTime}s ease-in-out`
                 }}
               />
             )

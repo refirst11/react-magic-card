@@ -60,14 +60,15 @@ type PickProperty = {
 type CommonProperty = {
   images: ImageProperty[]
   start: number
+  loading?: 'eager' | 'lazy'
   height: number
   width: number
   controller: number
   delay: number
   offsetIndex?: number
   reverseIndex?: boolean
-  fadeRange: number
-  transTime: number
+  initialFadeRange: number
+  initialTransTime: number
   className?: string
   classImages?: string
   classImageSelect?: string
