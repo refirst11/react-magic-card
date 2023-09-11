@@ -19,7 +19,7 @@ const PickImage = ({
   alpha = 0.4,
   blur = 4,
   scale = 2,
-  offset = 200,
+  offset = 0,
   transition
 }: PickImageProps) => {
   const backdropFilter = hasPick ? `blur(${blur}px)` : undefined
