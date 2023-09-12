@@ -262,9 +262,6 @@ export const MagicStraight = ({
 
   // has after Lazy loading fade transition.
   const [isLoaded, setIsLoaded] = useState(false)
-  useEffect(() => {
-    setIsLoaded(true)
-  }, [])
 
   return (
     <LazyMotion features={domAnimation}>
@@ -306,6 +303,7 @@ export const MagicStraight = ({
                 role={'button'}
                 draggable={false}
                 loading={loading}
+                onLoad={() => setIsLoaded(true)}
                 animate={{
                   y: hasSelect
                     ? vertical

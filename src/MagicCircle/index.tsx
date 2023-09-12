@@ -13,7 +13,6 @@ import PickImage from '../common/PickImage'
 export const MagicCircle = ({
   images,
   start,
-
   height,
   width,
   dynamic = true,
@@ -295,9 +294,6 @@ export const MagicCircle = ({
 
   // has after Lazy loading fade transition.
   const [isLoaded, setIsLoaded] = useState(false)
-  useEffect(() => {
-    setIsLoaded(true)
-  }, [])
 
   return (
     <LazyMotion features={domAnimation}>
@@ -340,6 +336,7 @@ export const MagicCircle = ({
                   alt={image.alt}
                   draggable={false}
                   loading={loading}
+                  onLoad={() => setIsLoaded(true)}
                   animate={{
                     rotate: -count,
                     scale: hasSelect ? animate?.selectScale : animate?.scale,
