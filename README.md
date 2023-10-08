@@ -1,10 +1,8 @@
-# react-magic-card
-
 [![Release Status](https://img.shields.io/github/release/su-pull/react-magic-card.svg)](https://github.com/su-pull/react-magic-card/releases/latest)
 [![Minzip Size](https://img.shields.io/bundlephobia/minzip/react-magic-card)](https://bundlephobia.com/package/react-magic-card)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-This is the framer motion components, that support images gallery.
+This is the framer motion animation components, that support images gallery.
 
 ## Installation
 
@@ -15,25 +13,31 @@ npm install react-magic-card framer-motion
 ## Usage Guide
 
 ```tsx
-import { MagicCircle } from 'react-magic-card'
+import { StraightInfinity } from 'react-magic-card'
 
 function MyComponent() {
   const images = [
     {
-      src: '/src.jpeg',
+      src: '/cat.jpeg',
+      alt: 'alt'
+    },
+    {
+      src: '/dog.jpeg',
+      alt: 'alt'
+    },
+    {
+      src: '/bird.jpeg',
       alt: 'alt'
     }
   ]
 
   return (
-    <MagicCircle
+    <StraightInfinity
       images={images}
       width={100}
       height={100}
-      radius={100}
       controller={100}
-      start={1}
-      delay={100}
+      start={Math.ceil(images.length / 2)}
     />
   )
 }
@@ -48,12 +52,8 @@ function MyComponent() {
 | width (required)      | width of the single image                                         |
 | height (required)     | height of the single image                                        |
 | controller (required) | controller size is add to the size of the component               |
-| delay                 | delay of the animation firing interval                            |
 | offsetIndex           | add an offset to the index of the components and images           |
 | reverseIndex          | order the change the overlap of zindex default true               |
-| loading               | loading attribute of img element in html                          |
-| initialFadeRange      | range of fade animation after page loaded                         |
-| initialTransTime      | transition time of fade animation after page loaded               |
 | className             | className of the component                                        |
 | classImages           | className of the images                                           |
 | classImageSelect      | className of the select image                                     |
@@ -61,24 +61,24 @@ function MyComponent() {
 | animate               | object in the animation property                                  |
 | initial               | object in the animation property                                  |
 | transition            | object in the transition property                                 |
-| pickTransition        | object in the transition property                                 |
-| pickProperty          | object in the pick property                                       |
+| detailTransition      | object in the transition property                                 |
+| detailProperty        | object in the detail property                                     |
+| loading               | loading attribute of img element in html                          |
+| initialFadeRange      | range of fade animation after page loaded                         |
+| initialTransTime      | transition time of fade animation after page loaded               |
 
-## MagicCircle Properties
+## CircleRotation Properties
 
-| Property          | Meaning                                         |
-| ----------------- | ----------------------------------------------- |
-| radius (required) | radius of the circle                            |
-| dynamic           | dynamic or static for rotation the default true |
+| Property          | Meaning              |
+| ----------------- | -------------------- |
+| radius (required) | radius of the circle |
 
-## MagicStraight Properties
+## StraightInfinity Properties
 
-| Property      | Meaning                                 |
-| ------------- | --------------------------------------- |
-| vertical      | vertical or horizontal the default true |
-| margin        | spacing of the between images           |
-| selectOffsetX | X-axis position                         |
-| selectOffsetY | Y-axis position                         |
+| Property | Meaning                                 |
+| -------- | --------------------------------------- |
+| vertical | vertical or horizontal the default true |
+| margin   | spacing of the between images           |
 
 ## Animation Object
 
@@ -99,16 +99,16 @@ function MyComponent() {
 
 It is Inherits framer motion transition object other than intera.
 
-## PickProperty Object
+## detailProperty Object
 
-| Property  | Meaning                                                   |
-| --------- | --------------------------------------------------------- |
-| classPick | className of the pick image                               |
-| white     | white or black for background the default true            |
-| alpha     | background transparency of a number between 0 ~ 1         |
-| blur      | blur intensity of a number between 1 ~ 20 a preferred     |
-| scale     | scale of the pick image                                   |
-| offset    | offset of an appearance position from the center position |
+| Property    | Meaning                                                   |
+| ----------- | --------------------------------------------------------- |
+| classDetail | className of the detail image                             |
+| white       | white or black for background the default true            |
+| alpha       | background transparency of a number between 0 ~ 1         |
+| blur        | blur intensity of a number between 1 ~ 20 a preferred     |
+| scale       | scale of the detail image                                 |
+| offset      | offset of an appearance position from the center position |
 
 ## License
 
