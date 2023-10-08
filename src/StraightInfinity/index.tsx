@@ -452,7 +452,6 @@ export const StraightInfinity = ({
           transition={detailTransition}
           zIndex={frontImage}
         />
-        <>{select}</>
       </div>
     </LazyMotion>
   )
