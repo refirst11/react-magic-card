@@ -7,11 +7,13 @@ type ImageProperty = {
 
 type AnimationProperty = {
   scale?: number
+  rotate?: number
   rotateY?: number
   rotateX?: number
   rotateZ?: number
   opacity?: number
   selectScale?: number
+  selectRotate?: number
   selectRotateY?: number
   selectRotateX?: number
   selectRotateZ?: number
@@ -43,13 +45,10 @@ type TransitionProperty =
       damping?: number
       mass?: number
       stiffness?: number
-      velocity?: number
-      restSpeed?: number
-      restDelta?: number
     }
 
-type PickProperty = {
-  classPick?: string
+type DetailProperty = {
+  classDetail?: string
   white?: boolean
   alpha?: number
   blur?: number
@@ -60,15 +59,11 @@ type PickProperty = {
 type CommonProperty = {
   images: ImageProperty[]
   start: number
-  loading?: 'eager' | 'lazy'
   height: number
   width: number
   controller: number
-  delay: number
   offsetIndex?: number
   reverseIndex?: boolean
-  initialFadeRange: number
-  initialTransTime: number
   className?: string
   classImages?: string
   classImageSelect?: string
@@ -76,42 +71,42 @@ type CommonProperty = {
   animate?: AnimationProperty
   initial?: AnimationProperty
   transition?: TransitionProperty
+  loading?: 'eager' | 'lazy'
+  initialFadeRange?: number
+  initialFadeTime?: number
 }
 
-type OffPick = {
-  pickScale?: true
-  pickProperty: PickProperty
-  pickTransition: TransitionProperty
+type DetailOn = {
+  detail?: true
+  detailProperty: DetailProperty
+  detailTransition: TransitionProperty
 }
 
-type OnPick = {
-  pickScale?: false
-  pickProperty?: undefined
-  pickTransition?: undefined
+type DetailOff = {
+  detail?: false
+  detailProperty?: undefined
+  detailTransition?: undefined
 }
 
-type MagicProperty = CommonProperty & (OffPick | OnPick)
+type MagicProperty = CommonProperty & (DetailOn | DetailOff)
 
-export type MagicCircleProps = MagicProperty & {
+export type CircleRotationProps = MagicProperty & {
   radius: number
-  dynamic?: boolean
-  scrollDirection?: boolean
 }
 
-export type MagicStraightProps = MagicProperty & {
+export type StraightInfinityProps = MagicProperty & {
   vertical?: boolean
   margin?: number
   selectOffsetX?: number
   selectOffsetY?: number
 }
 
-export type PickImageProps = {
+export type DetailImageProps = {
   onClick: MouseEventHandler<HTMLDivElement>
-  classPick?: string
-  hasPick: boolean
-  hasShift: boolean
-  argRef: Ref<HTMLDivElement>
-  argKey: number
+  classDetail?: string
+  hasDetail: boolean
+  detailRef: Ref<HTMLDivElement>
+  detailKey: number
   src: string
   alt: string
   width: number
@@ -121,6 +116,5 @@ export type PickImageProps = {
   alpha?: number
   blur?: number
   scale?: number
-  offset?: number
   transition?: TransitionProperty
 }
