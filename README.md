@@ -37,7 +37,7 @@ function MyComponent() {
       width={100}
       height={100}
       controller={100}
-      start={Math.ceil(images.length / 2)}
+      start={Math.ceil(images.length / 2 - 1)}
     />
   )
 }
@@ -97,7 +97,7 @@ function MyComponent() {
 
 ## Transition Object
 
-It is Inherits framer motion transition object other than intera.
+It is Inherits framer motion transition object ease and (type: 'spring').
 
 ## detailProperty Object
 
