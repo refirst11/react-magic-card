@@ -1,29 +1,27 @@
 import React from 'react'
 import { m } from 'framer-motion'
-import type { PickImageProps } from '../../types'
+import type { DetailImageProps } from '../../types'
 import styles from './styles.module.css'
 
-const PickImage = ({
+export const DetailImage = ({
   onClick,
-  classPick,
-  hasPick,
-  hasShift,
-  argRef,
-  argKey,
+  classDetail,
+  hasDetail,
+  detailRef,
+  detailKey,
   src,
   alt,
   width,
   height,
   zIndex,
   white = true,
-  alpha = 0.4,
-  blur = 4,
-  scale = 2,
-  offset = 0,
+  alpha = 0.3,
+  blur = 3,
+  scale = 2.5,
   transition
-}: PickImageProps) => {
-  const backdropFilter = hasPick ? `blur(${blur}px)` : undefined
-  const background = hasPick
+}: DetailImageProps) => {
+  const backdropFilter = hasDetail ? `blur(${blur}px)` : undefined
+  const background = hasDetail
     ? white
       ? `rgba(255, 255, 255, ${alpha})`
       : `rgba(0, 0, 0, ${alpha})`
@@ -33,19 +31,19 @@ const PickImage = ({
     <m.div
       role="button"
       onClick={onClick}
-      ref={argRef}
+      ref={detailRef}
       className={styles.full_size}
       animate={{
         zIndex: zIndex,
-        opacity: hasPick ? 1 : 0,
-        pointerEvents: hasPick ? 'auto' : 'none'
+        opacity: hasDetail ? 1 : 0,
+        pointerEvents: hasDetail ? 'auto' : 'none'
       }}
       style={{ backdropFilter: backdropFilter, background: background }}
       transition={transition}
     >
       <m.img
-        key={argKey}
-        className={classPick + ' ' + styles.no_select}
+        key={detailKey}
+        className={classDetail + ' ' + styles.no_select}
         src={src}
         alt={alt}
         width={width}
@@ -54,14 +52,12 @@ const PickImage = ({
         animate={{
           zIndex: zIndex + 1,
           scale: scale,
-          opacity: hasPick ? 1 : 0,
+          opacity: hasDetail ? 1 : 0,
           x: 0
         }}
-        initial={{ scale: 1, opacity: 0, x: hasShift ? offset : -offset }}
+        initial={{ scale: 1, opacity: 0 }}
         transition={transition}
       />
     </m.div>
   )
 }
-
-export default PickImage

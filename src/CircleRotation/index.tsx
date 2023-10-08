@@ -6,25 +6,19 @@ import React, {
   useState
 } from 'react'
 import { m, LazyMotion, domAnimation } from 'framer-motion'
-import type { MagicCircleProps } from '../types'
+import type { CircleRotationProps } from '../types'
 import styles from './styles.module.css'
-import PickImage from '../common/PickImage'
+import { DetailImage } from '../common/DetailImage'
 
-export const MagicCircle = ({
+export const CircleRotation = ({
   images,
   start,
   height,
   width,
-  dynamic = true,
-  scrollDirection = true,
   radius,
-  delay = 100,
   controller,
   offsetIndex = 0,
   reverseIndex = true,
-  loading,
-  initialFadeRange = 4,
-  initialTransTime = 0.2,
   className,
   classImages,
   classImageSelect,
@@ -32,10 +26,13 @@ export const MagicCircle = ({
   animate,
   initial,
   transition,
-  pickScale = true,
-  pickProperty,
-  pickTransition
-}: MagicCircleProps) => {
+  detail = true,
+  detailProperty,
+  detailTransition,
+  loading = 'lazy',
+  initialFadeRange = 1,
+  initialFadeTime = 0.2
+}: CircleRotationProps) => {
   // array out of range adjusting.
   start = Math.max(0, start)
   start = Math.min(start, images.length - 1)
@@ -47,13 +44,12 @@ export const MagicCircle = ({
   const [initialY, setInitialY] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [hasMove, setHasMove] = useState(false)
-  const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
-  const [hasPick, setHasPick] = useState(false)
+  const [hasDetail, setHasDetail] = useState(false)
 
   const refOuter = useRef<HTMLDivElement>(null)
-  const refPicker = useRef<HTMLDivElement>(null)
+  const refDetail = useRef<HTMLDivElement>(null)
 
   const centralAngle = ((2 * Math.PI) / images.length) * (180 / Math.PI)
 
@@ -61,27 +57,25 @@ export const MagicCircle = ({
   // turn left
   const shiftLeft = useCallback(() => {
     setSelect(select == 0 ? images.length - 1 : select - 1)
-    setHasShift(false)
     setHasDelayed(false)
-    if (dynamic) return setCount(count + centralAngle)
-  }, [centralAngle, count, dynamic, images.length, select])
+    setCount(count + centralAngle)
+  }, [centralAngle, count, images.length, select])
 
   // turn right
   const shiftRight = useCallback(() => {
     setSelect(select == images.length - 1 ? 0 : select + 1)
-    setHasShift(true)
     setHasDelayed(false)
-    if (dynamic) return setCount(count - centralAngle)
-  }, [centralAngle, count, dynamic, images.length, select])
+    setCount(count - centralAngle)
+  }, [centralAngle, count, images.length, select])
 
   // Function of the desktop.
   const handleScroll = useCallback(
     (e: WheelEvent) => {
       const delta = e.deltaY
-      if (delta < 0) scrollDirection ? shiftLeft() : shiftRight()
-      if (delta > 0) scrollDirection ? shiftRight() : shiftLeft()
+      if (delta < 0) shiftLeft()
+      if (delta > 0) shiftRight()
     },
-    [scrollDirection, shiftLeft, shiftRight]
+    [shiftLeft, shiftRight]
   )
 
   // Get a start y and x position in touchStart Y and X.
@@ -130,12 +124,12 @@ export const MagicCircle = ({
 
   const handleMouseDown = useCallback(
     (e: MouseEvent) => {
-      if (hasPick) return
+      if (hasDetail) return
       setIsDragging(true)
       setInitialX(e.clientX)
       setInitialY(e.clientY)
     },
-    [hasPick]
+    [hasDetail]
   )
 
   const handleMouseMove = useCallback(
@@ -185,16 +179,16 @@ export const MagicCircle = ({
   // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
     const outer = refOuter.current as HTMLDivElement
-    const picker = refPicker.current as HTMLDivElement
+    const detail = refDetail.current as HTMLDivElement
 
     const timeId = setTimeout(() => {
       setHasDelayed(true)
-    }, delay)
+    }, ((transition?.duration as number) / 2) * 1000)
 
     // Add handle event when component mount and deps update.
     document.addEventListener('mouseup', handleMouseUp)
     if (!hasDelayed) return
-    picker.addEventListener('mousedown', handleMouseDown)
+    detail.addEventListener('mousedown', handleMouseDown)
     outer.addEventListener('mousedown', handleMouseDown)
     document.addEventListener('mousemove', handleMouseMove)
 
@@ -202,16 +196,16 @@ export const MagicCircle = ({
     outer.addEventListener('touchstart', handleTouchStart)
     outer.addEventListener('touchmove', handleTouchMove)
 
-    picker.addEventListener('wheel', handleScroll)
-    picker.addEventListener('touchstart', handleTouchStart)
-    picker.addEventListener('touchmove', handleTouchMove)
+    detail.addEventListener('wheel', handleScroll)
+    detail.addEventListener('touchstart', handleTouchStart)
+    detail.addEventListener('touchmove', handleTouchMove)
 
     // Clean up event and timeId when component is unmount.
     return () => {
       clearTimeout(timeId)
 
       document.removeEventListener('mouseup', handleMouseUp)
-      picker.removeEventListener('mousedown', handleMouseDown)
+      detail.removeEventListener('mousedown', handleMouseDown)
       outer.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('mousemove', handleMouseMove)
 
@@ -219,18 +213,18 @@ export const MagicCircle = ({
       outer.removeEventListener('touchstart', handleTouchStart)
       outer.removeEventListener('touchmove', handleTouchMove)
 
-      picker.removeEventListener('wheel', handleScroll)
-      picker.removeEventListener('touchstart', handleTouchStart)
-      picker.removeEventListener('touchmove', handleTouchMove)
+      detail.removeEventListener('wheel', handleScroll)
+      detail.removeEventListener('touchstart', handleTouchStart)
+      detail.removeEventListener('touchmove', handleTouchMove)
     }
   }, [
-    delay,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
     handleTouchMove,
     handleScroll,
-    hasDelayed
+    hasDelayed,
+    transition?.duration
   ])
 
   // The controll start or end.
@@ -246,7 +240,7 @@ export const MagicCircle = ({
     }
 
     const outer = refOuter.current as HTMLDivElement
-    const picker = refPicker.current as HTMLDivElement
+    const detail = refDetail.current as HTMLDivElement
 
     // Add event.
     outer.addEventListener('mouseover', enterControl, { passive: false })
@@ -254,10 +248,10 @@ export const MagicCircle = ({
     outer.addEventListener('touchmove', enterControl, { passive: false })
     outer.addEventListener('touchend', leaveControl)
 
-    picker.addEventListener('mouseover', enterControl, { passive: false })
-    picker.addEventListener('mouseout', leaveControl)
-    picker.addEventListener('touchmove', enterControl, { passive: false })
-    picker.addEventListener('touchend', leaveControl)
+    detail.addEventListener('mouseover', enterControl, { passive: false })
+    detail.addEventListener('mouseout', leaveControl)
+    detail.addEventListener('touchmove', enterControl, { passive: false })
+    detail.addEventListener('touchend', leaveControl)
 
     // Clean up event when component is unmount.
     return () => {
@@ -266,10 +260,10 @@ export const MagicCircle = ({
       outer.removeEventListener('touchmove', enterControl)
       outer.removeEventListener('touchend', leaveControl)
 
-      picker.removeEventListener('mouseover', enterControl)
-      picker.removeEventListener('mouseout', leaveControl)
-      picker.removeEventListener('touchmove', enterControl)
-      picker.removeEventListener('touchend', leaveControl)
+      detail.removeEventListener('mouseover', enterControl)
+      detail.removeEventListener('mouseout', leaveControl)
+      detail.removeEventListener('touchmove', enterControl)
+      detail.removeEventListener('touchend', leaveControl)
 
       // page unmount with leave control.
       leaveControl()
@@ -288,12 +282,15 @@ export const MagicCircle = ({
     e.key === 'ArrowRight' && shiftLeft()
     e.key === 'ArrowDown' && shiftRight()
     e.key === 'ArrowLeft' && shiftRight()
-    e.key === 'Enter' && setHasPick(true)
-    e.key === 'Escape' && setHasPick(false)
+    e.key === 'Enter' && setHasDetail(true)
+    e.key === 'Escape' && setHasDetail(false)
   }
 
   // has after Lazy loading fade transition.
   const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
 
   return (
     <LazyMotion features={domAnimation}>
@@ -332,13 +329,13 @@ export const MagicCircle = ({
                     zIndex
                   }
                   role={'button'}
+                  aria-label="click and scale image"
                   src={image.src}
                   alt={image.alt}
                   draggable={false}
                   loading={loading}
-                  onLoad={() => setIsLoaded(true)}
                   animate={{
-                    rotate: -count,
+                    rotate: -count - (animate?.rotate ? animate?.rotate : 0),
                     scale: hasSelect ? animate?.selectScale : animate?.scale,
                     rotateY: hasSelect
                       ? animate?.selectRotateY
@@ -350,13 +347,13 @@ export const MagicCircle = ({
                       ? animate?.selectRotateZ
                       : animate?.rotateZ,
                     opacity: hasSelect
-                      ? hasPick
+                      ? hasDetail
                         ? 0
                         : animate?.selectOpacity
                       : animate?.opacity
                   }}
                   initial={{
-                    rotate: -count,
+                    rotate: -count - (initial?.rotate ? initial?.rotate : 0),
                     scale: hasSelect ? initial?.selectScale : initial?.scale,
                     rotateY: hasSelect
                       ? initial?.selectRotateY
@@ -374,7 +371,7 @@ export const MagicCircle = ({
                   transition={transition}
                   onPointerDown={() => setSelect(index)}
                   onClick={() =>
-                    hasSelect && pickScale && !hasMove && setHasPick(true)
+                    hasSelect && detail && !hasMove && setHasDetail(true)
                   }
                   style={{
                     zIndex: hasSelect ? frontImage : zIndex,
@@ -390,35 +387,36 @@ export const MagicCircle = ({
                       radius -
                       height / 2 +
                       'px',
-                    filter: isLoaded
-                      ? 'blur(0)'
-                      : `blur(${initialFadeRange}px)`,
-                    transition: `filter ${initialTransTime}s ease-in-out`
+                    filter:
+                      initialFadeRange && isLoaded
+                        ? ''
+                        : `blur(${initialFadeRange}px)`,
+                    transition: initialFadeTime
+                      ? `filter ${initialFadeTime}s ease-in-out`
+                      : ''
                   }}
                 />
               )
             })}
           </div>
         </m.div>
-        <PickImage
+        <DetailImage
+          detailRef={refDetail}
+          detailKey={select}
+          hasDetail={hasDetail}
           onClick={() => {
-            setHasPick(false)
+            setHasDetail(false)
           }}
-          hasPick={hasPick}
-          classPick={pickProperty?.classPick}
-          white={pickProperty?.white}
-          alpha={pickProperty?.alpha}
-          blur={pickProperty?.blur}
-          scale={pickProperty?.scale}
-          offset={pickProperty?.offset}
-          hasShift={hasShift}
-          argRef={refPicker}
-          argKey={select}
+          classDetail={detailProperty?.classDetail}
           src={images[select].src}
           alt={images[select].alt}
           width={width}
           height={height}
-          transition={pickTransition}
+          white={detailProperty?.white}
+          alpha={detailProperty?.alpha}
+          blur={detailProperty?.blur}
+          scale={detailProperty?.scale}
+          transition={detailTransition}
           zIndex={frontImage}
         />
       </div>

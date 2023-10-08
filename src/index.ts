@@ -1,4 +1,4 @@
-import { MagicCircle } from './MagicCircle'
-import { MagicStraight } from './MagicStraight'
-export { MagicCircle }
-export { MagicStraight }
+import { CircleRotation } from './CircleRotation'
+import { StraightInfinity } from './StraightInfinity'
+export { CircleRotation }
+export { StraightInfinity }

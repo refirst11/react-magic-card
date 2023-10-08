@@ -2,30 +2,25 @@ import React, {
   KeyboardEventHandler,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState
 } from 'react'
 import { m, LazyMotion, domAnimation } from 'framer-motion'
-import type { MagicStraightProps } from '../types'
+import type { StraightInfinityProps } from '../types'
 import styles from './styles.module.css'
-import PickImage from '../common/PickImage'
+import { DetailImage } from '../common/DetailImage'
 
-export const MagicStraight = ({
+export const StraightInfinity = ({
   images,
   start,
   height,
   width,
-  vertical = true,
+  vertical = false,
   margin = 0,
-  selectOffsetX = 0,
-  selectOffsetY = 0,
-  controller,
-  delay = 20,
+  controller = 0,
   offsetIndex = 0,
   reverseIndex = true,
-  loading,
-  initialFadeRange = 4,
-  initialTransTime = 0.2,
   className,
   classImages,
   classImageSelect,
@@ -33,10 +28,13 @@ export const MagicStraight = ({
   animate,
   initial,
   transition,
-  pickScale = true,
-  pickProperty,
-  pickTransition
-}: MagicStraightProps) => {
+  detail = true,
+  detailProperty,
+  detailTransition,
+  loading = 'lazy',
+  initialFadeRange = 1,
+  initialFadeTime = 0.2
+}: StraightInfinityProps) => {
   // array out of range adjusting.
   start = Math.max(0, start)
   start = Math.min(start, images.length - 1)
@@ -50,28 +48,36 @@ export const MagicStraight = ({
   const [hasShift, setHasShift] = useState(false)
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
-  const [hasPick, setHasPick] = useState(false)
+  const [edge, setEdge] = useState(images.length)
+  const [hasDetail, setHasDetail] = useState(false)
   const refOuter = useRef<HTMLDivElement>(null)
-  const refPicker = useRef<HTMLDivElement>(null)
+  const refDetail = useRef<HTMLDivElement>(null)
+  const [count, setCount] = useState(0)
 
   // Functions of the swipe and wheel a shifting.
   // turn left
-  const shiftLeft = useCallback(() => {
-    setSelect(select == 0 ? images.length - 1 : select - 1)
+  const shiftLeft = useCallback(async () => {
+    edge !== 0 && setSelect(select === 0 ? images.length - 1 : select - 1)
+    setEdge(edge === 0 ? images.length : edge - 1)
     setHasShift(false)
     setHasDelayed(false)
-  }, [images.length, select])
+    setCount(edge === 0 ? 5 : count + width + margin * 2)
+    return
+  }, [count, images.length, margin, select, edge, width])
 
   // turn right
-  const shiftRight = useCallback(() => {
-    setSelect(select == images.length - 1 ? 0 : select + 1)
+  const shiftRight = useCallback(async () => {
+    edge !== 5 && setSelect(select === images.length - 1 ? 0 : select + 1)
+    setEdge(edge === images.length ? 0 : edge + 1)
     setHasShift(true)
     setHasDelayed(false)
-  }, [images.length, select])
+    setCount(edge === 5 ? 0 : count - (width + margin * 2))
+    return
+  }, [count, images.length, margin, select, edge, width])
 
   // Wheel function of the desktop.
   const handleScroll = useCallback(
-    (e: WheelEvent) => {
+    async (e: WheelEvent) => {
       const delta = e.deltaY
       if (delta < 0) shiftLeft()
       if (delta > 0) shiftRight()
@@ -90,14 +96,14 @@ export const MagicStraight = ({
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
       const touch = e.touches[0]
-      const delta = hasPick
+      const delta = hasDetail
         ? touch.clientX
         : !vertical
         ? touch.clientX
         : touch.clientY
 
       if (
-        hasPick
+        hasDetail
           ? delta < touchStartX
           : !vertical
           ? delta < touchStartX
@@ -105,7 +111,7 @@ export const MagicStraight = ({
       )
         shiftLeft()
       if (
-        hasPick
+        hasDetail
           ? delta > touchStartX
           : !vertical
           ? delta > touchStartX
@@ -113,13 +119,13 @@ export const MagicStraight = ({
       )
         shiftRight()
 
-      hasPick
+      hasDetail
         ? setTouchStartX(delta)
         : !vertical
         ? setTouchStartX(delta)
         : setTouchStartY(delta)
     },
-    [hasPick, shiftLeft, shiftRight, touchStartX, touchStartY, vertical]
+    [hasDetail, shiftLeft, shiftRight, touchStartX, touchStartY, vertical]
   )
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
@@ -152,16 +158,16 @@ export const MagicStraight = ({
   // Main functional, exit function if ref and hasDelayed does not exist.
   useEffect(() => {
     const outer = refOuter.current as HTMLDivElement
-    const picker = refPicker.current as HTMLDivElement
+    const detail = refDetail.current as HTMLDivElement
 
     const timeId = setTimeout(() => {
       setHasDelayed(true)
-    }, delay)
+    }, ((transition?.duration as number) / 2) * 1000)
 
     // Add handle event when component mount and deps update.
     document.addEventListener('mouseup', handleMouseUp)
     if (!hasDelayed) return
-    picker.addEventListener('mousedown', handleMouseDown)
+    detail.addEventListener('mousedown', handleMouseDown)
     outer.addEventListener('mousedown', handleMouseDown)
     document.addEventListener('mousemove', handleMouseMove)
 
@@ -169,9 +175,9 @@ export const MagicStraight = ({
     outer.addEventListener('touchstart', handleTouchStart)
     outer.addEventListener('touchmove', handleTouchMove)
 
-    picker.addEventListener('wheel', handleScroll)
-    picker.addEventListener('touchstart', handleTouchStart)
-    picker.addEventListener('touchmove', handleTouchMove)
+    detail.addEventListener('wheel', handleScroll)
+    detail.addEventListener('touchstart', handleTouchStart)
+    detail.addEventListener('touchmove', handleTouchMove)
 
     // Clean up event and timeId when component is unmount.
     return () => {
@@ -182,21 +188,21 @@ export const MagicStraight = ({
       outer.removeEventListener('touchmove', handleTouchMove)
 
       document.removeEventListener('mouseup', handleMouseUp)
-      picker.removeEventListener('mousedown', handleMouseDown)
+      detail.removeEventListener('mousedown', handleMouseDown)
       outer.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('mousemove', handleMouseMove)
 
-      picker.removeEventListener('touchstart', handleTouchStart)
-      picker.removeEventListener('touchmove', handleTouchMove)
+      detail.removeEventListener('touchstart', handleTouchStart)
+      detail.removeEventListener('touchmove', handleTouchMove)
     }
   }, [
-    delay,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
     handleTouchMove,
     handleScroll,
-    hasDelayed
+    hasDelayed,
+    transition?.duration
   ])
 
   // The controll start or end.
@@ -212,7 +218,7 @@ export const MagicStraight = ({
     }
 
     const outer = refOuter.current as HTMLDivElement
-    const picker = refPicker.current as HTMLDivElement
+    const detail = refDetail.current as HTMLDivElement
 
     // Add event.
     outer.addEventListener('mouseover', enterControl, { passive: false })
@@ -220,10 +226,10 @@ export const MagicStraight = ({
     outer.addEventListener('touchmove', enterControl, { passive: false })
     outer.addEventListener('touchend', leaveControl)
 
-    picker.addEventListener('mouseover', enterControl, { passive: false })
-    picker.addEventListener('mouseout', leaveControl)
-    picker.addEventListener('touchmove', enterControl, { passive: false })
-    picker.addEventListener('touchend', leaveControl)
+    detail.addEventListener('mouseover', enterControl, { passive: false })
+    detail.addEventListener('mouseout', leaveControl)
+    detail.addEventListener('touchmove', enterControl, { passive: false })
+    detail.addEventListener('touchend', leaveControl)
 
     // Clean up event when component is unmount.
     return () => {
@@ -232,20 +238,15 @@ export const MagicStraight = ({
       outer.removeEventListener('touchmove', enterControl)
       outer.removeEventListener('touchend', leaveControl)
 
-      picker.removeEventListener('mouseover', enterControl)
-      picker.removeEventListener('mouseout', leaveControl)
-      picker.removeEventListener('touchmove', enterControl)
-      picker.removeEventListener('touchend', leaveControl)
+      detail.removeEventListener('mouseover', enterControl)
+      detail.removeEventListener('mouseout', leaveControl)
+      detail.removeEventListener('touchmove', enterControl)
+      detail.removeEventListener('touchend', leaveControl)
 
       // page unmount with leave control.
       leaveControl()
     }
   }, [])
-
-  // average calculation.
-  let total = 0
-  for (let i = 1; i < images.length; i++) total += i
-  const average = total / images.length
 
   // selected image.
   const frontImage = offsetIndex + images.length + 1
@@ -256,17 +257,54 @@ export const MagicStraight = ({
     e.key === 'ArrowUp' && shiftLeft()
     e.key === 'ArrowRight' && shiftRight()
     e.key === 'ArrowDown' && shiftRight()
-    e.key === 'Enter' && setHasPick(true)
-    e.key === 'Escape' && setHasPick(false)
+    e.key === 'Enter' && setHasDetail(true)
+    e.key === 'Escape' && setHasDetail(false)
   }
 
   // has after Lazy loading fade transition.
   const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
+
+  const [offsetWide, setOffsetWide] = useState(0)
+  const [offsetHeight, setOffsetHeight] = useState(0)
+
+  useLayoutEffect(() => {
+    if (edge === 0 && hasShift == true) {
+      if (!vertical)
+        setOffsetWide(images.length * width + images.length * (margin * 2))
+      if (vertical)
+        setOffsetHeight(images.length * height + images.length * (margin * 2))
+    }
+    if (edge === 5 && hasShift == false) {
+      if (!vertical) setOffsetWide(0)
+      if (vertical) setOffsetHeight(0)
+    }
+  }, [
+    hasDelayed,
+    hasShift,
+    height,
+    images.length,
+    margin,
+    edge,
+    vertical,
+    width
+  ])
+
+  useLayoutEffect(() => {
+    if (edge === 0 && hasShift == false) {
+      shiftLeft()
+    }
+    if (edge === 0 && hasShift == true) {
+      shiftRight()
+    }
+  }, [hasDelayed, hasShift, shiftLeft, shiftRight, edge])
 
   return (
     <LazyMotion features={domAnimation}>
       <div className={className}>
-        <div
+        <m.div
           className={styles.outer}
           ref={refOuter}
           tabIndex={offsetIndex <= 0 ? 0 : offsetIndex - 1}
@@ -274,16 +312,30 @@ export const MagicStraight = ({
           style={{
             zIndex: offsetIndex - 1,
             width: !vertical
-              ? images.length * (width + margin * 2) + controller + 'px'
+              ? images.length * (width + margin * 2) * 6 + controller + 'px'
               : width + controller,
             height: vertical
-              ? images.length * (height + margin * 2) + controller + 'px'
+              ? images.length * (height + margin * 2) * 6 + controller + 'px'
               : height + controller,
             flexDirection: vertical ? 'column' : 'row'
           }}
+          animate={{
+            x: !vertical ? count + offsetWide : 0,
+            y: vertical ? count + offsetHeight : 0
+          }}
+          transition={transition}
         >
           {images.map((image, index) => {
             const hasSelect = images[select] == images[index]
+            const hasEdge = () => {
+              for (let i = edge; i <= images.length - 1; i++) {
+                if (images[i] === images[index]) {
+                  return true
+                }
+              }
+              return false
+            }
+
             const zIndex = reverseIndex
               ? offsetIndex + images.length - 1 - index
               : offsetIndex + index
@@ -301,25 +353,20 @@ export const MagicStraight = ({
                 src={image.src}
                 alt={image.alt}
                 role={'button'}
+                aria-label="click and scale image"
                 draggable={false}
                 loading={loading}
-                onLoad={() => setIsLoaded(true)}
                 animate={{
-                  y: hasSelect
-                    ? vertical
-                      ? (average - index) * height +
-                        (average - index) * (margin * 2) +
-                        selectOffsetY
-                      : selectOffsetY
-                    : 0,
-                  x: hasSelect
-                    ? !vertical
-                      ? (average - index) * width +
-                        (average - index) * (margin * 2) +
-                        selectOffsetX
-                      : selectOffsetX
-                    : 0,
+                  x:
+                    !vertical && hasEdge()
+                      ? -(images.length * width + images.length * (margin * 2))
+                      : 0,
+                  y:
+                    vertical && hasEdge()
+                      ? -(images.length * height + images.length * (margin * 2))
+                      : 0,
                   scale: hasSelect ? animate?.selectScale : animate?.scale,
+                  rotate: hasSelect ? animate?.selectRotate : animate?.rotate,
                   rotateY: hasSelect
                     ? animate?.selectRotateY
                     : animate?.rotateY,
@@ -329,14 +376,20 @@ export const MagicStraight = ({
                   rotateZ: hasSelect
                     ? animate?.selectRotateZ
                     : animate?.rotateZ,
-                  opacity: hasSelect
-                    ? hasPick
+                  opacity:
+                    images[
+                      images[edge] === images[images.length] ? 0 : edge
+                    ] === images[index] || images[edge - 1] === images[index]
                       ? 0
-                      : animate?.selectOpacity
-                    : animate?.opacity
+                      : hasSelect
+                      ? hasDetail
+                        ? 0
+                        : animate?.selectOpacity
+                      : animate?.opacity
                 }}
                 initial={{
                   scale: hasSelect ? initial?.selectScale : initial?.scale,
+                  rotate: hasSelect ? animate?.selectRotate : animate?.rotate,
                   rotateY: hasSelect
                     ? initial?.selectRotateY
                     : initial?.rotateY,
@@ -350,8 +403,16 @@ export const MagicStraight = ({
                 }}
                 transition={transition}
                 onClick={() => {
-                  setSelect(index)
-                  hasSelect && pickScale && !hasMove && setHasPick(true)
+                  hasSelect && detail && !hasMove && setHasDetail(true)
+                  if (!hasDelayed) return
+                  images[select - 1] === images[index] ||
+                  (select === 0 && images[images.length - 1] === images[index])
+                    ? shiftLeft()
+                    : images[select + 1] === images[index] ||
+                      (select === images.length - 1 &&
+                        images[0] === images[index])
+                    ? shiftRight()
+                    : null
                 }}
                 style={{
                   zIndex: hasSelect ? frontImage : zIndex,
@@ -360,34 +421,38 @@ export const MagicStraight = ({
                   margin: vertical
                     ? margin + 'px' + ' 0'
                     : '0 ' + margin + 'px',
-                  filter: isLoaded ? 'blur(0)' : `blur(${initialFadeRange}px)`,
-                  transition: `filter ${initialTransTime}s ease-in-out`
+                  filter:
+                    initialFadeRange && isLoaded
+                      ? ''
+                      : `blur(${initialFadeRange}px)`,
+                  transition: initialFadeTime
+                    ? `filter ${initialFadeTime}s ease-in-out`
+                    : ''
                 }}
               />
             )
           })}
-        </div>
-        <PickImage
-          classPick={pickProperty?.classPick}
-          argRef={refPicker}
+        </m.div>
+        <DetailImage
+          detailRef={refDetail}
+          detailKey={select}
+          hasDetail={hasDetail}
           onClick={() => {
-            setHasPick(false)
+            setHasDetail(false)
           }}
-          hasPick={hasPick}
-          white={pickProperty?.white}
-          alpha={pickProperty?.alpha}
-          blur={pickProperty?.blur}
-          scale={pickProperty?.scale}
-          offset={pickProperty?.offset}
-          hasShift={hasShift}
-          argKey={select}
+          classDetail={detailProperty?.classDetail}
           src={images[select].src}
           alt={images[select].alt}
           width={width}
           height={height}
-          transition={pickTransition}
+          white={detailProperty?.white}
+          alpha={detailProperty?.alpha}
+          blur={detailProperty?.blur}
+          scale={detailProperty?.scale}
+          transition={detailTransition}
           zIndex={frontImage}
         />
+        <>{select}</>
       </div>
     </LazyMotion>
   )
