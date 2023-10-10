@@ -1,6 +1,6 @@
 {
   "name": "react-magic-card",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "React Component library for images gallery using the framer motion animation.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
