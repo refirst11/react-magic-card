@@ -18,6 +18,7 @@ export const DetailImage = ({
   alpha = 0.3,
   blur = 3,
   scale = 2.5,
+  rotate = 0,
   transition
 }: DetailImageProps) => {
   const backdropFilter = hasDetail ? `blur(${blur}px)` : undefined
@@ -53,7 +54,7 @@ export const DetailImage = ({
           zIndex: zIndex + 1,
           scale: scale,
           opacity: hasDetail ? 1 : 0,
-          x: 0
+          rotate: rotate
         }}
         initial={{ scale: 1, opacity: 0 }}
         transition={transition}

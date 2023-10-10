@@ -53,7 +53,7 @@ type DetailProperty = {
   alpha?: number
   blur?: number
   scale?: number
-  offset?: number
+  rotate?: number
 }
 
 type CommonProperty = {
@@ -116,5 +116,6 @@ export type DetailImageProps = {
   alpha?: number
   blur?: number
   scale?: number
+  rotate?: number
   transition?: TransitionProperty
 }
