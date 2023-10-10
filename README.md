@@ -86,11 +86,13 @@ function MyComponent() {
 | ------------- | ------------------------------------- |
 | scale         | scaling of the images                 |
 | opacity       | opacity or transparency of the images |
+| rotate        | rotation of the images                |
 | rotateX       | X-axis rotation of the images         |
 | rotateY       | Y-axis rotation of the images         |
 | rotateZ       | Z-axis rotation of the images         |
 | selectScale   | scaling of the selected image         |
 | selectOpacity | opacity of the selected image         |
+| selectRotate  | rotation of the selected image        |
 | selectRotateX | X-axis rotation of the selected image |
 | selectRotateY | Y-axis rotation of the selected image |
 | selectRotateZ | Z-axis rotation of the selected image |
@@ -101,14 +103,14 @@ It is Inherits framer motion transition object ease and (type: 'spring').
 
 ## detailProperty Object
 
-| Property    | Meaning                                                   |
-| ----------- | --------------------------------------------------------- |
-| classDetail | className of the detail image                             |
-| white       | white or black for background the default true            |
-| alpha       | background transparency of a number between 0 ~ 1         |
-| blur        | blur intensity of a number between 1 ~ 20 a preferred     |
-| scale       | scale of the detail image                                 |
-| offset      | offset of an appearance position from the center position |
+| Property    | Meaning                                               |
+| ----------- | ----------------------------------------------------- |
+| classDetail | className of the detail image                         |
+| white       | white or black for background the default true        |
+| alpha       | background transparency of a number between 0 ~ 1     |
+| blur        | blur intensity of a number between 1 ~ 20 a preferred |
+| scale       | scale of the detail image                             |
+| rotate      | rotation of the images                                |
 
 ## License
 
