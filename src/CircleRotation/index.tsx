@@ -400,26 +400,27 @@ export const CircleRotation = ({
             })}
           </div>
         </m.div>
-        <DetailImage
-          detailRef={refDetail}
-          detailKey={select}
-          hasDetail={hasDetail}
-          onClick={() => {
-            setHasDetail(false)
-          }}
-          classDetail={detailProperty?.classDetail}
-          src={images[select].src}
-          alt={images[select].alt}
-          width={width}
-          height={height}
-          white={detailProperty?.white}
-          alpha={detailProperty?.alpha}
-          blur={detailProperty?.blur}
-          scale={detailProperty?.scale}
-          transition={detailTransition}
-          zIndex={frontImage}
-        />
       </div>
+      <DetailImage
+        detailRef={refDetail}
+        detailKey={select}
+        hasDetail={hasDetail}
+        onClick={() => {
+          setHasDetail(false)
+        }}
+        classDetail={detailProperty?.classDetail}
+        src={images[select].src}
+        alt={images[select].alt}
+        width={width}
+        height={height}
+        white={detailProperty?.white}
+        alpha={detailProperty?.alpha}
+        blur={detailProperty?.blur}
+        scale={detailProperty?.scale}
+        rotate={detailProperty?.rotate}
+        transition={detailTransition}
+        zIndex={frontImage}
+      />
     </LazyMotion>
   )
 }
