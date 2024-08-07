@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "jsx": "react",
-    "target": "es2015",
-    "module": "commonjs",
+    "target": "ES2020",
+    "module": "NodeNext",
     "declaration": true,
     "declarationDir": "dist",
     "outDir": "dist",
