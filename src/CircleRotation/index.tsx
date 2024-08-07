@@ -47,6 +47,8 @@ export const CircleRotation = ({
   const [hasDelayed, setHasDelayed] = useState(true)
   const [select, setSelect] = useState(start)
   const [hasDetail, setHasDetail] = useState(false)
+  const [lastMoveTime, setLastMoveTime] = useState(Date.now())
+  const moveDelay = 140
 
   const refOuter = useRef<HTMLDivElement>(null)
   const refDetail = useRef<HTMLDivElement>(null)
@@ -59,6 +61,7 @@ export const CircleRotation = ({
     setSelect(select == 0 ? images.length - 1 : select - 1)
     setHasDelayed(false)
     setCount(count + centralAngle)
+    setLastMoveTime(Date.now())
   }, [centralAngle, count, images.length, select])
 
   // turn right
@@ -66,16 +69,19 @@ export const CircleRotation = ({
     setSelect(select == images.length - 1 ? 0 : select + 1)
     setHasDelayed(false)
     setCount(count - centralAngle)
+    setLastMoveTime(Date.now())
   }, [centralAngle, count, images.length, select])
 
   // Function of the desktop.
   const handleScroll = useCallback(
     (e: WheelEvent) => {
+      const currentTime = Date.now()
+      if (currentTime - lastMoveTime < moveDelay) return
       const delta = e.deltaY
       if (delta < 0) shiftLeft()
       if (delta > 0) shiftRight()
     },
-    [shiftLeft, shiftRight]
+    [lastMoveTime, shiftLeft, shiftRight]
   )
 
   // Get a start y and x position in touchStart Y and X.
@@ -87,6 +93,8 @@ export const CircleRotation = ({
   // Function of the mobile.
   const handleTouchMove = useCallback(
     (event: TouchEvent) => {
+      const currentTime = Date.now()
+      if (currentTime - lastMoveTime < moveDelay) return
       const touch = event.touches[0]
       const outer = refOuter.current as HTMLDivElement
       const outerHalfWidth = outer.clientWidth / 2
@@ -118,8 +126,9 @@ export const CircleRotation = ({
 
       setTouchStartX(deltaX)
       setTouchStartY(deltaY)
+      setLastMoveTime(Date.now())
     },
-    [shiftLeft, shiftRight, touchStartX, touchStartY]
+    [shiftLeft, shiftRight, touchStartX, touchStartY, lastMoveTime]
   )
 
   const handleMouseDown = useCallback(
@@ -134,7 +143,8 @@ export const CircleRotation = ({
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (isDragging) {
+      const currentTime = Date.now()
+      if (isDragging && currentTime - lastMoveTime >= moveDelay) {
         const outer = refOuter.current as HTMLDivElement
         const outerHalfWidth = outer.clientWidth / 2
         const outerHalfHeight = outer.clientHeight / 2
@@ -166,9 +176,10 @@ export const CircleRotation = ({
         setInitialX(e.clientX)
         setInitialY(e.clientY)
         setHasMove(true)
+        setLastMoveTime(Date.now())
       }
     },
-    [initialX, initialY, isDragging, shiftLeft, shiftRight]
+    [initialX, initialY, isDragging, shiftLeft, shiftRight, lastMoveTime]
   )
 
   const handleMouseUp = useCallback(() => {

@@ -53,6 +53,9 @@ export const StraightInfinity = ({
   const refOuter = useRef<HTMLDivElement>(null)
   const refDetail = useRef<HTMLDivElement>(null)
   const [count, setCount] = useState(0)
+  // Adding variables for speed limiting
+  const [lastMoveTime, setLastMoveTime] = useState(Date.now())
+  const moveDelay = 140 // Minimum delay between moves in milliseconds.
 
   // Functions of the swipe and wheel a shifting.
   // turn left
@@ -78,11 +81,15 @@ export const StraightInfinity = ({
   // Wheel function of the desktop.
   const handleScroll = useCallback(
     async (e: WheelEvent) => {
+      const now = Date.now()
+      if (now - lastMoveTime < moveDelay) return
+      setLastMoveTime(now)
+
       const delta = e.deltaY
       if (delta < 0) shiftLeft()
       if (delta > 0) shiftRight()
     },
-    [shiftLeft, shiftRight]
+    [shiftLeft, shiftRight, lastMoveTime, moveDelay]
   )
 
   // Get a start y and x position in touchStart Y and X.
@@ -95,6 +102,10 @@ export const StraightInfinity = ({
   // Swipe Function of the mobile.
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
+      const now = Date.now()
+      if (now - lastMoveTime < moveDelay) return
+      setLastMoveTime(now)
+
       const touch = e.touches[0]
       const delta = hasDetail
         ? touch.clientX
@@ -125,9 +136,17 @@ export const StraightInfinity = ({
         ? setTouchStartX(delta)
         : setTouchStartY(delta)
     },
-    [hasDetail, shiftLeft, shiftRight, touchStartX, touchStartY, vertical]
+    [
+      hasDetail,
+      shiftLeft,
+      shiftRight,
+      touchStartX,
+      touchStartY,
+      vertical,
+      lastMoveTime,
+      moveDelay
+    ]
   )
-
   const handleMouseDown = useCallback((e: MouseEvent) => {
     setIsDragging(true)
     setInitialX(e.clientX)
@@ -137,6 +156,10 @@ export const StraightInfinity = ({
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (isDragging) {
+        const now = Date.now()
+        if (now - lastMoveTime < moveDelay) return
+        setLastMoveTime(now)
+
         const deltaX = e.clientX - initialX
         const deltaY = e.clientY - initialY
 
@@ -147,7 +170,16 @@ export const StraightInfinity = ({
         setHasMove(true)
       }
     },
-    [initialX, initialY, isDragging, shiftLeft, shiftRight, vertical]
+    [
+      initialX,
+      initialY,
+      isDragging,
+      shiftLeft,
+      shiftRight,
+      vertical,
+      lastMoveTime,
+      moveDelay
+    ]
   )
 
   const handleMouseUp = useCallback(() => {
@@ -162,7 +194,7 @@ export const StraightInfinity = ({
 
     const timeId = setTimeout(() => {
       setHasDelayed(true)
-    }, ((transition?.duration as number) / 2) * 1000)
+    }, (transition?.duration as number) * 1000)
 
     // Add handle event when component mount and deps update.
     document.addEventListener('mouseup', handleMouseUp)
