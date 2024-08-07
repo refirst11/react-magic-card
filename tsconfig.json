@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "target": "es2015",
-    "module": "commonjs",
+    "module": "NodeNext",
     "declaration": true,
     "declarationDir": "dist",
     "outDir": "dist",
