@@ -21,12 +21,9 @@ export const DetailImage = ({
   rotate = 0,
   transition
 }: DetailImageProps) => {
-  const backdropFilter = hasDetail ? `blur(${blur}px)` : undefined
-  const background = hasDetail
-    ? white
-      ? `rgba(255, 255, 255, ${alpha})`
-      : `rgba(0, 0, 0, ${alpha})`
-    : undefined
+  const backdropFilter = `blur(${hasDetail ? blur : 0}px)`
+  const color = white ? '255, 255, 255' : '0, 0, 0'
+  const backgroundColor = `rgba(${color}, ${hasDetail ? alpha : 0})`
 
   return (
     <m.div
@@ -36,10 +33,12 @@ export const DetailImage = ({
       className={styles.full_size}
       animate={{
         zIndex: zIndex,
-        opacity: hasDetail ? 1 : 0,
+        backdropFilter: backdropFilter,
+        WebkitBackdropFilter: backdropFilter,
+        backgroundColor: backgroundColor,
         pointerEvents: hasDetail ? 'auto' : 'none'
       }}
-      style={{ backdropFilter: backdropFilter, background: background }}
+      initial={false}
       transition={transition}
     >
       <m.img
