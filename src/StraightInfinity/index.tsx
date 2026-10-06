@@ -416,8 +416,8 @@ export const StraightInfinity = ({
                       : hasSelect
                       ? hasDetail
                         ? 0
-                        : animate?.selectOpacity
-                      : animate?.opacity
+                        : animate?.selectOpacity ?? 1
+                      : animate?.opacity ?? 1
                 }}
                 initial={{
                   scale: hasSelect ? initial?.selectScale : initial?.scale,
@@ -433,7 +433,11 @@ export const StraightInfinity = ({
                     : initial?.rotateZ,
                   opacity: hasSelect ? initial?.selectOpacity : initial?.opacity
                 }}
-                transition={transition}
+                transition={
+                  hasSelect && detailTransition
+                    ? { ...transition, opacity: detailTransition }
+                    : transition
+                }
                 onClick={() => {
                   hasSelect && detail && !hasMove && setHasDetail(true)
                   if (!hasDelayed) return
