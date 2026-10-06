@@ -23,7 +23,7 @@
     "dist/"
   ],
   "scripts": {
-    "compile": "npx tsc && npm run copy-css",
+    "build": "npx tsc && npm run copy-css",
     "copy-css": "npm run copy-css1 && npm run copy-css2 && npm run copy-css3",
     "copy-css1": "cp src/CircleRotation/styles.module.css dist/CircleRotation/styles.module.css",
     "copy-css2": "cp src/StraightInfinity/styles.module.css dist/StraightInfinity/styles.module.css",
