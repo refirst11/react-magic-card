@@ -1,13 +1,9 @@
-[![Release Status](https://img.shields.io/github/release/su-pull/react-magic-card.svg)](https://github.com/su-pull/react-magic-card/releases/latest)
-[![Minzip Size](https://img.shields.io/bundlephobia/minzip/react-magic-card)](https://bundlephobia.com/package/react-magic-card)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
 This is the framer motion animation components, that support images gallery.
 
 ## Installation
 
 ```sh
-npm install react-magic-card framer-motion
+pnpm add react-magic-card framer-motion
 ```
 
 ## Usage Guide
