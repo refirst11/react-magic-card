@@ -1,5 +1,5 @@
 import React from 'react'
-import { m } from 'framer-motion'
+import { m, type Target } from 'framer-motion'
 import type { DetailImageProps } from '../../types'
 import styles from './styles.module.css'
 
@@ -34,7 +34,7 @@ export const DetailImage = ({
       animate={{
         zIndex: zIndex,
         backdropFilter: backdropFilter,
-        WebkitBackdropFilter: backdropFilter,
+        ...({ WebkitBackdropFilter: backdropFilter } as Target),
         backgroundColor: backgroundColor,
         pointerEvents: hasDetail ? 'auto' : 'none'
       }}
