@@ -6,6 +6,8 @@
     "declaration": true,
     "declarationDir": "dist",
     "outDir": "dist",
+    "rootDir": "src",
+    "types": ["css-modules"],
     "strict": true,
     "esModuleInterop": true
   },
