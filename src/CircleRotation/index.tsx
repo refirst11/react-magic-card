@@ -360,8 +360,8 @@ export const CircleRotation = ({
                     opacity: hasSelect
                       ? hasDetail
                         ? 0
-                        : animate?.selectOpacity
-                      : animate?.opacity
+                        : animate?.selectOpacity ?? 1
+                      : animate?.opacity ?? 1
                   }}
                   initial={{
                     rotate: -count - (initial?.rotate ? initial?.rotate : 0),
@@ -379,7 +379,11 @@ export const CircleRotation = ({
                       ? initial?.selectOpacity
                       : initial?.opacity
                   }}
-                  transition={transition}
+                  transition={
+                    hasSelect && detailTransition
+                      ? { ...transition, opacity: detailTransition }
+                      : transition
+                  }
                   onPointerDown={() => setSelect(index)}
                   onClick={() =>
                     hasSelect && detail && !hasMove && setHasDetail(true)
