@@ -25,7 +25,7 @@ type TransitionProperty =
       duration?: number
       type: undefined
       ease:
-        | number[]
+        | [number, number, number, number]
         | 'linear'
         | 'easeIn'
         | 'easeOut'
